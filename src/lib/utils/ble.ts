@@ -61,10 +61,25 @@ export async function getCharacteristic(
  */
 export async function writeCharacteristic(
   characteristic: BluetoothRemoteGATTCharacteristic,
-  data: DataView | Uint8Array
+  data: DataView | Uint8Array | ArrayBuffer
 ): Promise<void> {
-  const value = data instanceof DataView ? dataViewToUint8Array(data) : data;
-  await characteristic.writeValue(new Uint8Array(value));
+  // 转换为ArrayBuffer以匹配原项目行为
+  let buffer: ArrayBuffer;
+  
+  if (data instanceof DataView) {
+    // 创建新的Uint8Array副本以确保得到ArrayBuffer类型
+    const uint8 = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
+    const copy = new Uint8Array(uint8);
+    buffer = copy.buffer;
+  } else if (data instanceof Uint8Array) {
+    // 创建新的Uint8Array副本以确保得到ArrayBuffer类型
+    const copy = new Uint8Array(data);
+    buffer = copy.buffer;
+  } else {
+    buffer = data;
+  }
+  
+  await characteristic.writeValue(buffer);
 }
 
 /**

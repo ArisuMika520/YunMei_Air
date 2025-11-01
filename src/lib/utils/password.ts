@@ -17,14 +17,13 @@ export function generatePassword(secret: string): DataView {
   let offset = 0;
 
   // 生成6位随机数 (000000-999999)
-  const randomNum = Math.floor(Math.random() * 1000000);
-  const randomStr = randomNum.toString().padStart(6, '0');
+  let randomNum = Math.floor(Math.random() * 1000000);
 
   // 1. 协议头: 0xD0 (208)
   view.setUint8(offset++, 0xD0);
 
-  // 2. 数据长度 = secret长度 + 0xA5(1) + 随机数(2) + ID01(4) + 0xA7(1)
-  const dataLength = secret.length + 2 + 2 + 4 + 1;
+  // 2. 数据长度 = secret长度 + 0xA5(1) + 随机数(6) + ID01(4) + 0xA7(1)
+  const dataLength = secret.length + 2 + 2 + 10;
   view.setUint8(offset++, dataLength);
 
   // 3. 写入密钥字符串
@@ -35,17 +34,18 @@ export function generatePassword(secret: string): DataView {
   // 4. 分隔符: 0xA5 (165)
   view.setUint8(offset++, 0xA5);
 
-  // 5. 随机数的高位和低位（分成两个字节）
-  const randomHigh = Math.floor(randomNum / 256);
-  const randomLow = randomNum % 256;
-  view.setUint8(offset++, randomHigh);
-  view.setUint8(offset++, randomLow);
-
-  // 6. 设备标识: "ID01"
-  const deviceId = 'ID01';
-  for (let i = 0; i < deviceId.length; i++) {
-    view.setUint8(offset++, deviceId.charCodeAt(i));
+  // 5. 写入6位随机数，每一位单独作为一个字节（关键修复！）
+  // 原项目逻辑：将6位数的每一位（0-9）分别写入
+  for (let i = 0; i < 6; i++) {
+    view.setUint8(offset++, randomNum % 10);
+    randomNum = Math.floor(randomNum / 10);
   }
+
+  // 6. 设备标识: 73, 68, 48, 49 (对应 'I', 'D', '0', '1')
+  view.setUint8(offset++, 73);  // 'I'
+  view.setUint8(offset++, 68);  // 'D'
+  view.setUint8(offset++, 48);  // '0'
+  view.setUint8(offset++, 49);  // '1'
 
   // 7. 结束符: 0xA7 (167)
   view.setUint8(offset++, 0xA7);
