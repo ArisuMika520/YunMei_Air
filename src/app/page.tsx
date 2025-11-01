@@ -20,7 +20,7 @@ export default function HomePage() {
   return (
     <div className="flex min-h-screen items-center justify-center">
       <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">云梅Air</h1>
+        <h1 className="text-4xl font-bold mb-4">云莓Air</h1>
         <p className="text-gray-500">智能门锁蓝牙解锁</p>
         <div className="mt-8">
           <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-500 mx-auto"></div>

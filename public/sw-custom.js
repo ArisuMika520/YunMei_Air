@@ -150,7 +150,7 @@ self.addEventListener('push', (event) => {
   };
   
   event.waitUntil(
-    self.registration.showNotification('云梅Air', options)
+    self.registration.showNotification('云莓Air', options)
   );
 });
 

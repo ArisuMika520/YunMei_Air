@@ -1,3 +1,7 @@
+/**
+ * 环境变量诊断页面
+ * 用于检查环境变量是否正确配置
+ */
 'use client';
 
 import { useEffect, useState } from 'react';

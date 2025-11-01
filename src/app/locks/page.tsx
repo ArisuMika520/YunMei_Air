@@ -61,7 +61,7 @@ export default function LocksPage() {
           <div>
             <h1 className="text-2xl font-bold text-gray-900">我的门锁</h1>
             {user && (
-              <p className="text-sm text-gray-500 mt-1">欢迎，{user.realName || user.telephone}</p>
+              <p className="text-sm text-gray-500 mt-1">欢迎使用云莓Air喵~</p>
             )}
           </div>
           <button

@@ -1,5 +1,5 @@
 /**
- * 云梅API客户端 - 兼容旧代理版本
+ * 云莓API客户端 - 兼容旧代理版本
  * 使用 LegacyProxyClient 连接原始 PHP 代理格式
  */
 
