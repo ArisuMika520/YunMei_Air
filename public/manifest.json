@@ -1,7 +1,7 @@
 {
-  "name": "云莓Air - 智能门锁",
-  "short_name": "云莓Air",
-  "description": "云莓门锁蓝牙解锁应用，支持离线使用",
+  "name": "云梅Air - 智能门锁",
+  "short_name": "云梅Air",
+  "description": "云梅门锁蓝牙解锁应用，支持离线使用",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",

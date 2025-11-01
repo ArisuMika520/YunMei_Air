@@ -15,14 +15,14 @@ export const viewport: Viewport = {
 export const metadata: Metadata = {
   metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:${process.env.PORT || 3090}`),
   title: {
-    default: "云莓Air - 智能门锁",
-    template: "%s | 云莓Air"
+    default: "云梅Air - 智能门锁",
+    template: "%s | 云梅Air"
   },
-  description: "云莓门锁蓝牙解锁应用，支持离线使用、PWA安装",
-  applicationName: "云莓Air",
+  description: "云梅门锁蓝牙解锁应用，支持离线使用、PWA安装",
+  applicationName: "云梅Air",
   authors: [{ name: "Arisumika" }],
   generator: "Next.js",
-  keywords: ["云莓", "智能门锁", "蓝牙开锁", "PWA", "离线应用"],
+  keywords: ["云梅", "智能门锁", "蓝牙开锁", "PWA", "离线应用"],
   referrer: "origin-when-cross-origin",
   colorScheme: "light",
   creator: "Arisumika",
@@ -36,7 +36,7 @@ export const metadata: Metadata = {
   appleWebApp: {
     capable: true,
     statusBarStyle: "default",
-    title: "云莓Air",
+    title: "云梅Air",
     startupImage: [
       {
         url: "/icon-512.png",
@@ -48,22 +48,22 @@ export const metadata: Metadata = {
     type: "website",
     locale: "zh_CN",
     url: "/",
-    siteName: "云莓Air",
-    title: "云莓Air - 智能门锁",
-    description: "云莓门锁蓝牙解锁应用",
+    siteName: "云梅Air",
+    title: "云梅Air - 智能门锁",
+    description: "云梅门锁蓝牙解锁应用",
     images: [
       {
         url: "/icon-512.png",
         width: 512,
         height: 512,
-        alt: "云莓Air"
+        alt: "云梅Air"
       }
     ]
   },
   twitter: {
     card: "summary",
-    title: "云莓Air - 智能门锁",
-    description: "云莓门锁蓝牙解锁应用",
+    title: "云梅Air - 智能门锁",
+    description: "云梅门锁蓝牙解锁应用",
     images: ["/icon-512.png"]
   },
   icons: {
@@ -92,7 +92,7 @@ export const metadata: Metadata = {
     "mobile-web-app-capable": "yes",
     "apple-mobile-web-app-capable": "yes",
     "apple-mobile-web-app-status-bar-style": "default",
-    "apple-mobile-web-app-title": "云莓Air"
+    "apple-mobile-web-app-title": "云梅Air"
   }
 };
 

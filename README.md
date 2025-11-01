@@ -1,5 +1,5 @@
 # 关于YunMei_Air
-云莓不智能的Next.js重现版 + 全新功能，部分核心技术来源于[云莓不智能PWA](https://github.com/zxy19/yunmei_unintelligent_pwa)
+云梅不智能的Next.js重现版 + 全新功能，部分核心技术来源于[云梅不智能PWA](https://github.com/zxy19/yunmei_unintelligent_pwa)
 
 ## 使用现成
 

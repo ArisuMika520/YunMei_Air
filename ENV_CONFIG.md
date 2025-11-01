@@ -11,7 +11,7 @@
 # 使用你已部署的 Vercel 代理地址
 NEXT_PUBLIC_PROXY_URL=https://your-proxy.vercel.app/api/proxy
 
-# 云莓 API 基础 URL（可选，默认为官方地址）
+# 云梅 API 基础 URL（可选，默认为官方地址）
 NEXT_PUBLIC_API_BASE_URL=https://base.yunmeitech.com
 ```
 

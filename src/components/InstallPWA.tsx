@@ -90,7 +90,7 @@ export default function InstallPWA() {
           
           <div className="flex-1 min-w-0">
             <h3 className="text-lg font-semibold text-gray-900 mb-1">
-              安装云莓Air
+              安装云梅Air
             </h3>
             <p className="text-sm text-gray-600 mb-3">
               将应用添加到主屏幕，获得更快的访问速度和离线使用能力
