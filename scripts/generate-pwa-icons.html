@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PWA 图标生成器 - 云梅Air</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 800px;
+            width: 100%;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        h1 {
+            color: #2563eb;
+            margin-bottom: 10px;
+            font-size: 2em;
+        }
+        
+        .subtitle {
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .upload-area {
+            border: 3px dashed #2563eb;
+            border-radius: 15px;
+            padding: 40px;
+            text-align: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-bottom: 30px;
+        }
+        
+        .upload-area:hover {
+            background: #f0f4ff;
+            border-color: #1d4ed8;
+        }
+        
+        .upload-area.dragover {
+            background: #e0e7ff;
+            border-color: #1d4ed8;
+        }
+        
+        input[type="file"] {
+            display: none;
+        }
+        
+        .upload-icon {
+            font-size: 60px;
+            margin-bottom: 20px;
+        }
+        
+        .upload-text {
+            font-size: 1.2em;
+            color: #333;
+            margin-bottom: 10px;
+        }
+        
+        .upload-hint {
+            color: #666;
+            font-size: 0.9em;
+        }
+        
+        .preview-section {
+            display: none;
+            margin-top: 30px;
+        }
+        
+        .preview-section.active {
+            display: block;
+        }
+        
+        .preview-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+        
+        .preview-item {
+            text-align: center;
+            padding: 15px;
+            background: #f9fafb;
+            border-radius: 10px;
+            transition: transform 0.2s;
+        }
+        
+        .preview-item:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+        
+        .preview-item img {
+            width: 100%;
+            height: auto;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        .preview-item .size-label {
+            font-size: 0.9em;
+            color: #666;
+            font-weight: 500;
+        }
+        
+        .download-btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            margin-top: 30px;
+            transition: all 0.3s;
+            display: block;
+            width: 100%;
+        }
+        
+        .download-btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            font-weight: 500;
+        }
+        
+        .status.success {
+            background: #d1fae5;
+            color: #065f46;
+        }
+        
+        .status.error {
+            background: #fee2e2;
+            color: #991b1b;
+        }
+        
+        canvas {
+            display: none;
+        }
+        
+        .tips {
+            background: #f0f4ff;
+            border-left: 4px solid #2563eb;
+            padding: 20px;
+            margin-top: 30px;
+            border-radius: 8px;
+        }
+        
+        .tips h3 {
+            color: #2563eb;
+            margin-bottom: 10px;
+        }
+        
+        .tips ul {
+            margin-left: 20px;
+            color: #333;
+            line-height: 1.8;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎨 PWA 图标生成器</h1>
+        <p class="subtitle">为云梅Air智能门锁生成完整的PWA图标套装</p>
+        
+        <div class="upload-area" id="uploadArea">
+            <div class="upload-icon">📁</div>
+            <div class="upload-text">点击或拖拽上传图标</div>
+            <div class="upload-hint">推荐尺寸：512x512px 或更大，PNG格式</div>
+            <input type="file" id="fileInput" accept="image/*">
+        </div>
+        
+        <div class="preview-section" id="previewSection">
+            <h2>预览生成的图标</h2>
+            <div class="preview-grid" id="previewGrid"></div>
+            <button class="download-btn" id="downloadBtn">📥 下载所有图标</button>
+        </div>
+        
+        <div id="status"></div>
+        
+        <div class="tips">
+            <h3>💡 使用建议</h3>
+            <ul>
+                <li>上传一张 512x512px 或更大的正方形图标</li>
+                <li>建议使用简洁、识别度高的设计</li>
+                <li>生成后的图标将自动保存到 public 目录</li>
+                <li>Maskable 图标会自动添加安全区域（20% padding）</li>
+                <li>适用于 Android、iOS、Windows 等所有平台</li>
+            </ul>
+        </div>
+    </div>
+    
+    <canvas id="canvas"></canvas>
+    
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jszip/3.10.1/jszip.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/FileSaver.js/2.0.5/FileSaver.min.js"></script>
+    
+    <script>
+        const uploadArea = document.getElementById('uploadArea');
+        const fileInput = document.getElementById('fileInput');
+        const previewSection = document.getElementById('previewSection');
+        const previewGrid = document.getElementById('previewGrid');
+        const downloadBtn = document.getElementById('downloadBtn');
+        const status = document.getElementById('status');
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const maskableSizes = [192, 512];
+        
+        let generatedImages = [];
+        
+        // 上传区域事件
+        uploadArea.addEventListener('click', () => fileInput.click());
+        
+        uploadArea.addEventListener('dragover', (e) => {
+            e.preventDefault();
+            uploadArea.classList.add('dragover');
+        });
+        
+        uploadArea.addEventListener('dragleave', () => {
+            uploadArea.classList.remove('dragover');
+        });
+        
+        uploadArea.addEventListener('drop', (e) => {
+            e.preventDefault();
+            uploadArea.classList.remove('dragover');
+            const file = e.dataTransfer.files[0];
+            if (file && file.type.startsWith('image/')) {
+                handleFile(file);
+            }
+        });
+        
+        fileInput.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (file) {
+                handleFile(file);
+            }
+        });
+        
+        function handleFile(file) {
+            showStatus('正在处理图片...', 'info');
+            
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const img = new Image();
+                img.onload = () => {
+                    generateIcons(img);
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function generateIcons(sourceImg) {
+            generatedImages = [];
+            previewGrid.innerHTML = '';
+            
+            // 生成普通图标
+            sizes.forEach(size => {
+                const dataUrl = resizeImage(sourceImg, size, size, false);
+                generatedImages.push({
+                    name: `icon-${size}.png`,
+                    data: dataUrl,
+                    size: size
+                });
+                addPreview(dataUrl, size, false);
+            });
+            
+            // 生成 maskable 图标（带安全区域）
+            maskableSizes.forEach(size => {
+                const dataUrl = resizeImage(sourceImg, size, size, true);
+                generatedImages.push({
+                    name: `icon-maskable-${size}.png`,
+                    data: dataUrl,
+                    size: size
+                });
+                addPreview(dataUrl, size, true);
+            });
+            
+            previewSection.classList.add('active');
+            showStatus(`✅ 成功生成 ${generatedImages.length} 个图标！`, 'success');
+        }
+        
+        function resizeImage(img, width, height, maskable) {
+            canvas.width = width;
+            canvas.height = height;
+            
+            ctx.clearRect(0, 0, width, height);
+            
+            if (maskable) {
+                // Maskable 图标：添加 20% 的安全边距
+                const padding = width * 0.1;
+                const innerSize = width - padding * 2;
+                
+                // 可选：添加背景色
+                ctx.fillStyle = '#2563eb';
+                ctx.fillRect(0, 0, width, height);
+                
+                ctx.drawImage(img, padding, padding, innerSize, innerSize);
+            } else {
+                // 普通图标：填满整个画布
+                ctx.drawImage(img, 0, 0, width, height);
+            }
+            
+            return canvas.toDataURL('image/png');
+        }
+        
+        function addPreview(dataUrl, size, maskable) {
+            const div = document.createElement('div');
+            div.className = 'preview-item';
+            
+            const img = document.createElement('img');
+            img.src = dataUrl;
+            img.alt = `${size}x${size}`;
+            
+            const label = document.createElement('div');
+            label.className = 'size-label';
+            label.textContent = maskable ? `${size}x${size} (Maskable)` : `${size}x${size}`;
+            
+            div.appendChild(img);
+            div.appendChild(label);
+            previewGrid.appendChild(div);
+        }
+        
+        downloadBtn.addEventListener('click', async () => {
+            showStatus('正在打包图标...', 'info');
+            
+            const zip = new JSZip();
+            
+            for (const img of generatedImages) {
+                const base64Data = img.data.split(',')[1];
+                zip.file(img.name, base64Data, { base64: true });
+            }
+            
+            // 生成使用说明
+            const readme = `# 云梅Air PWA 图标
+
+## 使用方法
+
+1. 将所有 icon-*.png 文件复制到项目的 public/ 目录
+2. manifest.json 已配置完成，无需修改
+3. 重新构建项目：npm run build
+4. 部署后即可在手机上"添加到主屏幕"
+
+## 图标列表
+
+### 普通图标（any）
+${sizes.map(s => `- icon-${s}.png (${s}x${s})`).join('\n')}
+
+### Maskable 图标
+${maskableSizes.map(s => `- icon-maskable-${s}.png (${s}x${s})`).join('\n')}
+
+## 注意事项
+
+- 所有图标都已优化为 PNG 格式
+- Maskable 图标已添加安全区域，适配各种设备形状
+- 图标会自动适配不同平台（Android、iOS、Windows 等）
+
+生成时间：${new Date().toLocaleString('zh-CN')}
+`;
+            
+            zip.file('README.md', readme);
+            
+            const blob = await zip.generateAsync({ type: 'blob' });
+            saveAs(blob, 'yunmei-air-pwa-icons.zip');
+            
+            showStatus('✅ 图标已打包下载！请解压到 public/ 目录', 'success');
+        });
+        
+        function showStatus(message, type) {
+            status.innerHTML = message;
+            status.className = `status ${type}`;
+        }
+    </script>
+</body>
+</html>
+

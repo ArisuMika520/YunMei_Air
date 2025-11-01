@@ -1,0 +1,169 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>离线模式 - 云梅Air</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            max-width: 500px;
+            width: 100%;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+        }
+        
+        .icon {
+            font-size: 80px;
+            margin-bottom: 20px;
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0%, 100% {
+                transform: scale(1);
+            }
+            50% {
+                transform: scale(1.1);
+            }
+        }
+        
+        h1 {
+            color: #2563eb;
+            margin-bottom: 15px;
+            font-size: 2em;
+        }
+        
+        p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 30px;
+            font-size: 1.1em;
+        }
+        
+        .btn {
+            background: #2563eb;
+            color: white;
+            border: none;
+            padding: 15px 40px;
+            border-radius: 10px;
+            font-size: 1.1em;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: inline-block;
+            text-decoration: none;
+        }
+        
+        .btn:hover {
+            background: #1d4ed8;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(37, 99, 235, 0.3);
+        }
+        
+        .features {
+            margin-top: 30px;
+            text-align: left;
+            background: #f9fafb;
+            padding: 20px;
+            border-radius: 10px;
+        }
+        
+        .features h3 {
+            color: #2563eb;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+        
+        .features ul {
+            list-style: none;
+        }
+        
+        .features li {
+            padding: 8px 0;
+            color: #333;
+            display: flex;
+            align-items: center;
+        }
+        
+        .features li::before {
+            content: '✓';
+            color: #10b981;
+            font-weight: bold;
+            margin-right: 10px;
+            font-size: 1.2em;
+        }
+        
+        .status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #fef3c7;
+            border-left: 4px solid #f59e0b;
+            border-radius: 8px;
+            color: #92400e;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="icon">📡</div>
+        <h1>当前处于离线模式</h1>
+        <p>网络连接不可用，但您仍然可以使用云梅Air的部分功能。</p>
+        
+        <button class="btn" onclick="location.reload()">🔄 重新连接</button>
+        
+        <div class="features">
+            <h3>离线可用功能</h3>
+            <ul>
+                <li>查看已缓存的门锁列表</li>
+                <li>查看上次同步的锁状态</li>
+                <li>使用蓝牙直接开锁（无需网络）</li>
+                <li>浏览应用界面和设置</li>
+            </ul>
+        </div>
+        
+        <div class="status">
+            <strong>💡 提示：</strong> 蓝牙开锁功能不需要网络连接，您可以直接使用！
+        </div>
+    </div>
+    
+    <script>
+        // 自动检测网络恢复
+        window.addEventListener('online', () => {
+            console.log('Network restored!');
+            location.reload();
+        });
+        
+        // 定期检查网络状态
+        setInterval(() => {
+            if (navigator.onLine) {
+                fetch('/', { method: 'HEAD' })
+                    .then(() => {
+                        location.reload();
+                    })
+                    .catch(() => {
+                        console.log('Still offline');
+                    });
+            }
+        }, 5000);
+    </script>
+</body>
+</html>
+

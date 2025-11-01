@@ -1,0 +1,43 @@
+{
+  "name": "yunmei-air",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev -H 0.0.0.0",
+    "build": "next build",
+    "start": "next start -H 0.0.0.0",
+    "stop": "next stop",
+    "lint": "next lint",
+    "pm2:start": "pm2 start ecosystem.config.js --env production",
+    "pm2:stop": "pm2 stop yunmei-air",
+    "pm2:restart": "pm2 restart yunmei-air",
+    "pm2:reload": "pm2 reload yunmei-air",
+    "pm2:delete": "pm2 delete yunmei-air",
+    "pm2:logs": "pm2 logs yunmei-air",
+    "pm2:monit": "pm2 monit",
+    "pm2:list": "pm2 list",
+    "deploy": "npm run build && pm2 restart yunmei-air || pm2 start ecosystem.config.js --env production"
+  },
+  "dependencies": {
+    "axios": "^1.7.9",
+    "crypto-js": "^4.2.0",
+    "next": "^15.0.3",
+    "react": "^18.3.1",
+    "react-dom": "^18.3.1",
+    "zustand": "^5.0.2"
+  },
+  "devDependencies": {
+    "@types/crypto-js": "^4.2.2",
+    "@types/node": "^22",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "@types/web-bluetooth": "^0.0.21",
+    "autoprefixer": "^10.0.1",
+    "eslint": "^8",
+    "eslint-config-next": "^15.0.3",
+    "next-pwa": "^5.6.0",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}

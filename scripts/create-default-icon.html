@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>生成默认图标</title>
+</head>
+<body>
+    <h1>生成默认云梅Air图标</h1>
+    <p>打开浏览器控制台查看生成的图标数据...</p>
+    <canvas id="canvas"></canvas>
+    
+    <script>
+        const canvas = document.getElementById('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        const sizes = [72, 96, 128, 144, 152, 192, 384, 512];
+        const maskableSizes = [192, 512];
+        
+        function createDefaultIcon(size, isMaskable) {
+            canvas.width = size;
+            canvas.height = size;
+            
+            // 渐变背景
+            const gradient = ctx.createLinearGradient(0, 0, size, size);
+            gradient.addColorStop(0, '#2563eb');
+            gradient.addColorStop(1, '#1d4ed8');
+            ctx.fillStyle = gradient;
+            ctx.fillRect(0, 0, size, size);
+            
+            const padding = isMaskable ? size * 0.15 : size * 0.1;
+            const iconSize = size - padding * 2;
+            
+            // 绘制锁的图标
+            ctx.save();
+            ctx.translate(size / 2, size / 2);
+            
+            const scale = iconSize / 512;
+            ctx.scale(scale, scale);
+            
+            // 锁身
+            ctx.fillStyle = 'white';
+            ctx.fillRect(-120, 40, 240, 180);
+            ctx.strokeStyle = 'white';
+            ctx.lineWidth = 20;
+            ctx.strokeRect(-120, 40, 240, 180);
+            
+            // 锁扣
+            ctx.beginPath();
+            ctx.arc(0, 0, 100, Math.PI, 0, true);
+            ctx.lineWidth = 30;
+            ctx.stroke();
+            
+            // 钥匙孔
+            ctx.fillStyle = '#1d4ed8';
+            ctx.beginPath();
+            ctx.arc(0, 100, 25, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillRect(-10, 100, 20, 60);
+            
+            // 蓝牙图标（右上角）
+            if (size >= 192) {
+                ctx.restore();
+                ctx.save();
+                ctx.translate(size * 0.75, size * 0.25);
+                ctx.fillStyle = 'white';
+                ctx.font = `${size * 0.15}px Arial`;
+                ctx.textAlign = 'center';
+                ctx.textBaseline = 'middle';
+                ctx.fillText('🔵', 0, 0);
+            }
+            
+            ctx.restore();
+            
+            // 下载图标
+            const link = document.createElement('a');
+            const filename = isMaskable ? `icon-maskable-${size}.png` : `icon-${size}.png`;
+            link.download = filename;
+            link.href = canvas.toDataURL('image/png');
+            link.click();
+            
+            console.log(`生成: ${filename}`);
+        }
+        
+        // 生成所有尺寸
+        let delay = 0;
+        sizes.forEach(size => {
+            setTimeout(() => createDefaultIcon(size, false), delay);
+            delay += 100;
+        });
+        
+        maskableSizes.forEach(size => {
+            setTimeout(() => createDefaultIcon(size, true), delay);
+            delay += 100;
+        });
+        
+        setTimeout(() => {
+            alert(`已生成 ${sizes.length + maskableSizes.length} 个图标！\n请将它们移动到 public/ 目录`);
+        }, delay + 500);
+    </script>
+</body>
+</html>
+
