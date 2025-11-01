@@ -18,13 +18,15 @@ module.exports = {
       max_restarts: 10,
       env: {
         NODE_ENV: 'dev',
-        PORT: 3000,
+        PORT: 3090,
         HOSTNAME: '0.0.0.0'
       },
       env_production: {
         NODE_ENV: 'production',
-        PORT: 3000,
+        PORT: 3090,
         HOSTNAME: '0.0.0.0',
+        // 站点URL配置
+        NEXT_PUBLIC_SITE_URL: 'https://yunmei.arisumika.top',
         // 透明代理配置（必填）
         NEXT_PUBLIC_PROXY_URL: 'https://yunmei.arisumika.top/proxy',
         NEXT_PUBLIC_API_BASE_URL: 'https://base.yunmeitech.com'

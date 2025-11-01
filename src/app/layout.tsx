@@ -13,6 +13,7 @@ export const viewport: Viewport = {
 };
 
 export const metadata: Metadata = {
+  metadataBase: new URL(process.env.NEXT_PUBLIC_SITE_URL || `http://localhost:${process.env.PORT || 3090}`),
   title: {
     default: "云梅Air - 智能门锁",
     template: "%s | 云梅Air"
