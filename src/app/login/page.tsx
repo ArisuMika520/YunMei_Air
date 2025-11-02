@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
 import { YunmeiClient } from '@/lib/api/yunmeiClient';
@@ -12,13 +12,20 @@ import { feedback } from '@/lib/utils/interactions';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { setUser, setLocks } = useUserStore();
+  const { user, setUser, setLocks } = useUserStore();
   const { toasts, toast, removeToast } = useToast();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
+
+  useEffect(() => {
+    if (user) {
+      console.log('[Login] 检测到已登录用户，自动跳转到门锁列表');
+      router.replace('/locks');
+    }
+  }, [user, router]);
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();

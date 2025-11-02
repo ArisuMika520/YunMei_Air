@@ -99,6 +99,9 @@ export const metadata: Metadata = {
 
 import InstallPWA from "@/components/InstallPWA";
 import ThemeProvider from "@/components/ThemeProvider";
+import NetworkStatus from "@/components/NetworkStatus";
+import OfflineProvider from "@/components/OfflineProvider";
+import OfflineIndicator from "@/components/OfflineIndicator";
 
 export default function RootLayout({
   children,
@@ -108,10 +111,14 @@ export default function RootLayout({
   return (
     <html lang="zh-CN">
       <body className="antialiased bg-gradient-soft">
-        <ThemeProvider>
-          {children}
-          <InstallPWA />
-        </ThemeProvider>
+        <OfflineProvider>
+          <ThemeProvider>
+            {children}
+            <InstallPWA />
+            <NetworkStatus />
+            <OfflineIndicator />
+          </ThemeProvider>
+        </OfflineProvider>
       </body>
     </html>
   );
