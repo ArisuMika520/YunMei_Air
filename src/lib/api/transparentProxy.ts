@@ -7,16 +7,10 @@ export class TransparentProxyClient {
   private proxyUrl: string;
 
   constructor(proxyUrl?: string) {
-    this.proxyUrl = proxyUrl || process.env.NEXT_PUBLIC_PROXY_URL || '';
+    // 优先使用本地 API 路由，避免 CORS 问题
+    this.proxyUrl = proxyUrl || process.env.NEXT_PUBLIC_PROXY_URL || '/api/proxy';
 
-    if (!this.proxyUrl) {
-      throw new Error(
-        '透明代理 URL 未配置！\n' +
-        '请在项目根目录创建 .env.local 文件并添加：\n' +
-        'NEXT_PUBLIC_PROXY_URL=https://yunmei.arisumika.top/proxy\n\n' +
-        '如果使用 PM2 部署，请在 ecosystem.config.js 的 env_production 中添加该环境变量。'
-      );
-    }
+    console.log('[TransparentProxy] 使用代理 URL:', this.proxyUrl);
   }
 
   /**

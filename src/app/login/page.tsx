@@ -2,21 +2,27 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import { motion } from 'framer-motion';
 import { YunmeiClient } from '@/lib/api/yunmeiClient';
 import { useUserStore } from '@/store/userStore';
+import { useToast } from '@/lib/hooks/useToast';
+import { ToastContainer } from '@/components/Toast';
+import { fadeVariants, buttonVariants, inputVariants } from '@/lib/animations/variants';
+import { feedback } from '@/lib/utils/interactions';
 
 export default function LoginPage() {
   const router = useRouter();
   const { setUser, setLocks } = useUserStore();
+  const { toasts, toast, removeToast } = useToast();
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [error, setError] = useState('');
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    setError('');
+    feedback.buttonClick();
     setLoading(true);
 
     try {
@@ -46,40 +52,82 @@ export default function LoginPage() {
 
       console.log('门锁列表:', locks);
 
-      // 4. 保存到Store
+      // 4. 保存到Store（会自动设置第一个锁为默认锁）
       setLocks(locks);
 
-      // 5. 跳转到门锁列表页
+      // 5. 成功反馈
+      toast.success('登录成功', '正在跳转...');
+      feedback.success();
+
+      // 6. 延迟跳转到默认锁详情页（第一个锁）
+      setTimeout(() => {
+        if (locks.length > 0) {
+          router.push(`/lock/${locks[0].id}`);
+        } else {
       router.push('/locks');
+        }
+      }, 1000);
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '登录失败';
-      setError(errorMessage);
+      toast.error('登录失败', errorMessage);
+      feedback.error();
       console.error('登录错误:', err);
-    } finally {
       setLoading(false);
     }
   };
 
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-50 to-indigo-100 px-4">
-      <div className="max-w-md w-full bg-white rounded-2xl shadow-xl p-8">
-        <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-gray-900 mb-2">云梅Air</h1>
-          <p className="text-gray-500">智能门锁蓝牙解锁</p>
-        </div>
+    <>
+      <div className="min-h-screen flex items-center justify-center px-4 py-8 safe-top safe-bottom">
+        <div className="max-w-md w-full">
+          {/* 背景装饰 */}
+          <div className="absolute top-0 left-0 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-breathing" />
+          <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-breathing" style={{ animationDelay: '1s' }} />
 
-        <form onSubmit={handleLogin} className="space-y-6">
-          {error && (
-            <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded-lg text-sm">
-              {error}
-            </div>
-          )}
+          {/* 主卡片 */}
+          <div className="relative card glass p-8">
+            {/* Logo和标题 */}
+            <motion.div
+              initial={{ y: -20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.2, duration: 0.5 }}
+              className="text-center mb-8"
+            >
+              {/* Logo图标 */}
+              <motion.div
+                initial={{ scale: 0 }}
+                animate={{ scale: 1 }}
+                transition={{ delay: 0.3, duration: 0.5, type: 'spring', stiffness: 200 }}
+                className="w-20 h-20 mx-auto mb-4 bg-primary-500 rounded-3xl shadow-lg flex items-center justify-center"
+              >
+                <svg className="w-12 h-12 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z" />
+                </svg>
+              </motion.div>
 
+              <h1 className="text-4xl font-bold text-gradient mb-2">云梅Air</h1>
+              <p className="text-neutral-500">智能门锁 · 一触即开</p>
+            </motion.div>
+
+            {/* 登录表单 */}
+            <motion.form
+              initial={{ y: 20, opacity: 0 }}
+              animate={{ y: 0, opacity: 1 }}
+              transition={{ delay: 0.4, duration: 0.5 }}
+              onSubmit={handleLogin}
+              className="space-y-5"
+            >
+              {/* 手机号输入 */}
           <div>
-            <label htmlFor="username" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="username" className="block text-sm font-medium text-neutral-700 mb-2">
               手机号
             </label>
+                <motion.div
+                  initial="idle"
+                  whileFocus="focus"
+                  className="relative"
+                >
             <input
               id="username"
               type="tel"
@@ -87,50 +135,119 @@ export default function LoginPage() {
               onChange={(e) => setUsername(e.target.value)}
               required
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition disabled:bg-gray-100"
+                    className="input-primary"
               placeholder="请输入手机号"
-            />
+                    autoComplete="tel"
+                  />
+                  <div className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
+                    </svg>
+                  </div>
+                </motion.div>
           </div>
 
+              {/* 密码输入 */}
           <div>
-            <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+                <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
               密码
             </label>
+                <motion.div
+                  initial="idle"
+                  whileFocus="focus"
+                  className="relative"
+                >
             <input
               id="password"
-              type="password"
+                    type={showPassword ? 'text' : 'password'}
               value={password}
               onChange={(e) => setPassword(e.target.value)}
               required
               disabled={loading}
-              className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition disabled:bg-gray-100"
+                    className="input-primary pr-12"
               placeholder="请输入密码"
+                    autoComplete="current-password"
             />
+                  <button
+                    type="button"
+                    onClick={() => {
+                      setShowPassword(!showPassword);
+                      feedback.buttonClick();
+                    }}
+                    className="absolute right-4 top-1/2 -translate-y-1/2 text-neutral-400 hover:text-primary-400 transition-colors"
+                    tabIndex={-1}
+                  >
+                    {showPassword ? (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                      </svg>
+                    ) : (
+                      <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13.875 18.825A10.05 10.05 0 0112 19c-4.478 0-8.268-2.943-9.543-7a9.97 9.97 0 011.563-3.029m5.858.908a3 3 0 114.243 4.243M9.878 9.878l4.242 4.242M9.88 9.88l-3.29-3.29m7.532 7.532l3.29 3.29M3 3l3.59 3.59m0 0A9.953 9.953 0 0112 5c4.478 0 8.268 2.943 9.543 7a10.025 10.025 0 01-4.132 5.411m0 0L21 21" />
+                      </svg>
+                    )}
+                  </button>
+                </motion.div>
           </div>
 
-          <button
+              {/* 登录按钮 */}
+              <motion.button
             type="submit"
             disabled={loading || !username || !password}
-            className="w-full bg-blue-600 hover:bg-blue-700 text-white font-medium py-3 px-4 rounded-lg transition duration-200 disabled:bg-gray-400 disabled:cursor-not-allowed flex items-center justify-center"
+                variants={buttonVariants}
+                initial="idle"
+                whileHover="hover"
+                whileTap="tap"
+                className="btn-primary w-full relative overflow-hidden"
           >
             {loading ? (
-              <>
-                <svg className="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
-                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
-                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+                  <span className="flex items-center justify-center gap-3">
+                    <motion.div
+                      animate={{ rotate: 360 }}
+                      transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
+                      className="w-5 h-5 border-2 border-white border-t-transparent rounded-full"
+                    />
+                    <span>登录中...</span>
+                  </span>
+                ) : (
+                  <span className="flex items-center justify-center gap-2">
+                    <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M11 16l-4-4m0 0l4-4m-4 4h14m-5 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h7a3 3 0 013 3v1" />
                 </svg>
-                登录中...
-              </>
-            ) : (
-              '登录'
+                    <span>登录</span>
+                  </span>
             )}
-          </button>
-        </form>
+              </motion.button>
+            </motion.form>
 
-        <div className="mt-6 text-center text-sm text-gray-500">
-          <p>首次登录将自动获取您的门锁列表</p>
+            {/* 底部提示 */}
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              transition={{ delay: 0.6, duration: 0.5 }}
+              className="mt-6 text-center"
+            >
+              <p className="text-sm text-neutral-500">
+                首次登录将自动获取您的门锁列表
+              </p>
+            </motion.div>
+        </div>
+
+          {/* 版本信息 */}
+          <motion.p
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            transition={{ delay: 0.8, duration: 0.5 }}
+            className="text-center text-xs text-neutral-400 mt-6"
+          >
+            v0.1.0 · Made by ArisuMika❤️
+          </motion.p>
         </div>
       </div>
-    </div>
+
+      {/* Toast通知容器 */}
+      <ToastContainer toasts={toasts} onClose={removeToast} />
+    </>
   );
 }

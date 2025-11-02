@@ -12,6 +12,7 @@ export class Lock {
   username: string;           // 用户名（MD5加密后）
   schoolNo: string;           // 学校编号
   lockNo: string;             // 锁编号
+  isShared: boolean;          // 是否为分享获得的门锁
 
   constructor(
     label: string,
@@ -21,7 +22,8 @@ export class Lock {
     secret: string,
     username: string,
     schoolNo: string,
-    lockNo: string
+    lockNo: string,
+    isShared: boolean = false
   ) {
     this.label = label;
     this.mac = mac;
@@ -31,6 +33,7 @@ export class Lock {
     this.username = username;
     this.schoolNo = schoolNo;
     this.lockNo = lockNo;
+    this.isShared = isShared;
   }
 
   /**
@@ -94,7 +97,8 @@ export class Lock {
       json.secret || json.lockSecret || '',
       json.username || '',
       json.schoolNo || '',
-      json.lockNo || ''
+      json.lockNo || '',
+      json.isShared || false
     );
   }
 
@@ -110,7 +114,8 @@ export class Lock {
       secret: this.secret,
       username: this.username,
       schoolNo: this.schoolNo,
-      lockNo: this.lockNo
+      lockNo: this.lockNo,
+      isShared: this.isShared
     };
   }
 

@@ -97,6 +97,7 @@ export const metadata: Metadata = {
 };
 
 import InstallPWA from "@/components/InstallPWA";
+import ThemeProvider from "@/components/ThemeProvider";
 
 export default function RootLayout({
   children,
@@ -105,9 +106,11 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="zh-CN">
-      <body className="antialiased">
-        {children}
-        <InstallPWA />
+      <body className="antialiased bg-gradient-soft">
+        <ThemeProvider>
+          {children}
+          <InstallPWA />
+        </ThemeProvider>
       </body>
     </html>
   );

@@ -27,8 +27,10 @@ module.exports = {
         HOSTNAME: '0.0.0.0',
         // 站点URL配置
         NEXT_PUBLIC_SITE_URL: 'https://yunmei.arisumika.top',
-        // 透明代理配置（必填）
-        NEXT_PUBLIC_PROXY_URL: 'https://yunmei.arisumika.top/proxy',
+        // 透明代理配置
+        // 可以使用内置代理 /api/proxy（推荐）或外部代理节点
+        // 示例：https://yunmei.arisumika.top/api/proxy
+        NEXT_PUBLIC_PROXY_URL: 'https://yunmei.arisumika.top/api/proxy',
         NEXT_PUBLIC_API_BASE_URL: 'https://base.yunmeitech.com'
       },
       error_file: './logs/pm2-error.log',
