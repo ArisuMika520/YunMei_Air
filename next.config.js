@@ -7,12 +7,20 @@ const withPWA = require('@ducanh2912/next-pwa').default({
   disable: process.env.NODE_ENV === 'development',
   workboxOptions: {
     disableDevLogs: true,
-    runtimeCaching: [
-      {
-        urlPattern: /^https?:\/\/[^/]+\/(login|locks|lock\/[^/]+|settings.*)?$/,
-        handler: 'CacheFirst',
+  runtimeCaching: [
+    {
+        urlPattern: ({ url }) => {
+          const pathname = url.pathname;
+          return pathname === '/' || 
+                 pathname === '/login' || 
+                 pathname === '/locks' || 
+                 pathname.startsWith('/lock/') || 
+                 pathname.startsWith('/settings');
+        },
+        handler: 'NetworkFirst',
         options: {
           cacheName: 'pages-cache',
+          networkTimeoutSeconds: 3,
           expiration: {
             maxEntries: 50,
             maxAgeSeconds: 7 * 24 * 60 * 60 // 7 天
@@ -54,11 +62,11 @@ const withPWA = require('@ducanh2912/next-pwa').default({
       },
       {
         urlPattern: /^https?:\/\/[^/]+\/api\/.*/,
-        handler: 'NetworkFirst',
-        options: {
+      handler: 'NetworkFirst',
+      options: {
           cacheName: 'api-cache',
           networkTimeoutSeconds: 5,
-          expiration: {
+        expiration: {
             maxEntries: 50,
             maxAgeSeconds: 24 * 60 * 60 // 24 小时
           }
@@ -74,9 +82,9 @@ const withPWA = require('@ducanh2912/next-pwa').default({
             maxEntries: 100,
             maxAgeSeconds: 24 * 60 * 60 // 24 小时
           }
-        }
       }
-    ]
+    }
+  ]
   }
 });
 

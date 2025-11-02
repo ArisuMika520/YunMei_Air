@@ -2,18 +2,27 @@
  * Service Worker 注册工具
  * 适用于所有浏览器，包括不支持 PWA 安装的 iOS Safari
  * 主要功能：离线缓存、快速加载
+ * 
+ * 降级方案：
+ * - 如果浏览器不支持 Service Worker（如 Bluefy），应用仍可正常工作
+ * - 蓝牙功能不依赖 Service Worker
+ * - 数据存储使用 IndexedDB（不依赖 Service Worker）
  */
 
 'use client';
 
 export async function registerServiceWorker() {
   if (typeof window === 'undefined') {
-    return;
+    return { success: false, reason: 'not-browser' };
   }
 
   if (!('serviceWorker' in navigator)) {
-    console.log('[SW] 浏览器不支持 Service Worker');
-    return;
+    console.warn('[SW] 浏览器不支持 Service Worker（如 Bluefy）');
+    console.info('[SW] 应用将在降级模式下运行：');
+    console.info('[SW] 蓝牙功能正常可用');
+    console.info('[SW] 数据持久化（IndexedDB）正常可用');
+    console.info('[SW] 离线缓存不可用（需要在线加载页面）');
+    return { success: false, reason: 'not-supported' };
   }
 
   try {
@@ -56,8 +65,11 @@ export async function registerServiceWorker() {
       console.log('[SW] Service Worker 已更新，准备刷新页面');
     });
 
+    return { success: true, registration };
   } catch (error) {
     console.error('[SW] Service Worker 注册失败:', error);
+    console.info('[SW] 应用将在降级模式下运行（蓝牙功能仍可用）');
+    return { success: false, reason: 'registration-failed', error };
   }
 }
 

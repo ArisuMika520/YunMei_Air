@@ -102,6 +102,7 @@ import ThemeProvider from "@/components/ThemeProvider";
 import NetworkStatus from "@/components/NetworkStatus";
 import OfflineProvider from "@/components/OfflineProvider";
 import OfflineIndicator from "@/components/OfflineIndicator";
+import BrowserCompatibilityBanner from "@/components/BrowserCompatibilityBanner";
 
 export default function RootLayout({
   children,
@@ -113,6 +114,7 @@ export default function RootLayout({
       <body className="antialiased bg-gradient-soft">
         <OfflineProvider>
           <ThemeProvider>
+            <BrowserCompatibilityBanner />
             {children}
             <InstallPWA />
             <NetworkStatus />

@@ -19,6 +19,7 @@
     "deploy": "npm run build && pm2 restart yunmei-air || pm2 start ecosystem.config.js --env production"
   },
   "dependencies": {
+    "@heroicons/react": "^2.2.0",
     "@types/qrcode": "^1.5.6",
     "axios": "^1.7.9",
     "crypto-js": "^4.2.0",
