@@ -13,19 +13,16 @@ export default function InstallPWA() {
   const [isInstalled, setIsInstalled] = useState(false);
 
   useEffect(() => {
-    // 检查是否已安装
     if (window.matchMedia('(display-mode: standalone)').matches) {
       setIsInstalled(true);
       return;
     }
 
-    // 监听 beforeinstallprompt 事件
     const handler = (e: Event) => {
       e.preventDefault();
       const promptEvent = e as BeforeInstallPromptEvent;
       setDeferredPrompt(promptEvent);
       
-      // 延迟显示安装提示（用户访问几秒后再显示）
       setTimeout(() => {
         setShowInstallPrompt(true);
       }, 3000);
@@ -33,7 +30,6 @@ export default function InstallPWA() {
 
     window.addEventListener('beforeinstallprompt', handler);
 
-    // 监听应用安装成功
     window.addEventListener('appinstalled', () => {
       console.log('PWA 安装成功！');
       setIsInstalled(true);
@@ -51,10 +47,8 @@ export default function InstallPWA() {
       return;
     }
 
-    // 显示安装提示
     deferredPrompt.prompt();
 
-    // 等待用户响应
     const { outcome } = await deferredPrompt.userChoice;
     console.log(`用户选择: ${outcome}`);
 
@@ -64,18 +58,15 @@ export default function InstallPWA() {
       console.log('用户拒绝安装');
     }
 
-    // 清除保存的提示
     setDeferredPrompt(null);
     setShowInstallPrompt(false);
   };
 
   const handleDismiss = () => {
     setShowInstallPrompt(false);
-    // 7天后再次显示
     localStorage.setItem('pwa-dismissed', Date.now().toString());
   };
 
-  // 如果已安装或不显示提示，返回 null
   if (isInstalled || !showInstallPrompt) {
     return null;
   }

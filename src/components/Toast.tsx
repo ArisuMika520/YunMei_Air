@@ -18,7 +18,6 @@ export interface ToastProps {
 
 const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProps) => {
   useEffect(() => {
-    // 触觉反馈
     if (type === 'success') {
       hapticFeedback.success();
     } else if (type === 'error') {
@@ -29,7 +28,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
       hapticFeedback.light();
     }
 
-    // 自动关闭
     if (duration > 0) {
       const timer = setTimeout(() => {
         onClose(id);
@@ -39,7 +37,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
     }
   }, [id, type, duration, onClose]);
 
-  // 图标配置
   const icons = {
     success: (
       <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -63,7 +60,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
     ),
   };
 
-  // 颜色配置
   const colors = {
     success: {
       bg: 'bg-success-50',
@@ -109,7 +105,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
       `}
     >
       <div className="flex items-start gap-3">
-        {/* 图标 */}
         <div className={`
           flex-shrink-0
           w-10 h-10 rounded-xl
@@ -120,7 +115,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
           {icons[type]}
         </div>
 
-        {/* 内容 */}
         <div className="flex-1 min-w-0">
           <h4 className={`font-semibold ${colorConfig.text} mb-0.5`}>
             {title}
@@ -132,7 +126,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
           )}
         </div>
 
-        {/* 关闭按钮 */}
         <button
           onClick={() => onClose(id)}
           className={`
@@ -150,7 +143,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
         </button>
       </div>
 
-      {/* 进度条 */}
       {duration > 0 && (
         <motion.div
           className={`absolute bottom-0 left-0 right-0 h-1 ${colorConfig.bg} rounded-b-xl overflow-hidden`}
@@ -172,7 +164,6 @@ const Toast = ({ id, type, title, message, duration = 3000, onClose }: ToastProp
   );
 };
 
-// Toast容器组件
 export interface ToastContainerProps {
   toasts: ToastProps[];
   onClose: (id: string) => void;

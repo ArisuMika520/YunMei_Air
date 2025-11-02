@@ -53,7 +53,6 @@ export function useBLE() {
         });
       });
 
-      // 解锁成功
       setState({
         isUnlocking: false,
         progress: 100,

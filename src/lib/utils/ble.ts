@@ -63,16 +63,13 @@ export async function writeCharacteristic(
   characteristic: BluetoothRemoteGATTCharacteristic,
   data: DataView | Uint8Array | ArrayBuffer
 ): Promise<void> {
-  // 转换为ArrayBuffer以匹配原项目行为
   let buffer: ArrayBuffer;
   
   if (data instanceof DataView) {
-    // 创建新的Uint8Array副本以确保得到ArrayBuffer类型
     const uint8 = new Uint8Array(data.buffer, data.byteOffset, data.byteLength);
     const copy = new Uint8Array(uint8);
     buffer = copy.buffer;
   } else if (data instanceof Uint8Array) {
-    // 创建新的Uint8Array副本以确保得到ArrayBuffer类型
     const copy = new Uint8Array(data);
     buffer = copy.buffer;
   } else {
@@ -92,19 +89,16 @@ export async function unlockProcess(
   onProgress?: (progress: number, message: string) => void
 ): Promise<void> {
   try {
-    // Step 1: 请求设备 (0-20%)
     onProgress?.(0, '请求蓝牙设备...');
     const device = await requestDevice(lock.serviceUuid);
 
     onProgress?.(20, '设备已找到');
 
-    // Step 2: 连接GATT服务器 (20-40%)
     onProgress?.(30, '连接中...');
     const server = await connectGATT(device);
 
     onProgress?.(40, '已连接到设备');
 
-    // Step 3: 获取特征 (40-60%)
     onProgress?.(50, '获取蓝牙特征...');
     const characteristic = await getCharacteristic(
       server,
@@ -114,7 +108,6 @@ export async function unlockProcess(
 
     onProgress?.(60, '特征已获取');
 
-    // Step 4: 生成密码并写入 (60-90%)
     onProgress?.(70, '生成解锁密码...');
     const password = generatePassword(lock.secret);
 
@@ -123,10 +116,8 @@ export async function unlockProcess(
 
     onProgress?.(90, '指令已发送');
 
-    // Step 5: 完成 (90-100%)
     onProgress?.(100, '解锁成功！');
 
-    // 延迟断开连接
     setTimeout(() => {
       device.gatt?.disconnect();
     }, 1000);

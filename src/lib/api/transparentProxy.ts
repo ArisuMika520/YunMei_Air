@@ -36,8 +36,6 @@ export class TransparentProxyClient {
       headers
     });
 
-    // 关键修复：使用新格式（通过 URL 参数传递目标信息）
-    // 代理会自动将 body 转换为查询字符串发送给云梅 API
     const proxyParams = new URLSearchParams({
       targetUrl: targetUrl,
       method: method
@@ -47,8 +45,6 @@ export class TransparentProxyClient {
 
     console.log('[TransparentProxy] 最终代理URL:', finalProxyUrl);
 
-    // 将数据作为 JSON 发送给代理
-    // 代理会负责转换为云梅 API 期望的查询字符串格式
     const requestInit: RequestInit = {
       method: 'POST',
       headers: {

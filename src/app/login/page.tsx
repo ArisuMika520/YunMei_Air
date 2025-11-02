@@ -28,12 +28,10 @@ export default function LoginPage() {
     try {
       const client = new YunmeiClient();
 
-      // 1. 登录
       const user = await client.login(username, password);
       console.log('登录成功:', user);
       setUser(user);
 
-      // 2. 获取学校列表
       const schools = await client.getSchools();
       console.log('学校列表:', schools);
 
@@ -41,7 +39,6 @@ export default function LoginPage() {
         throw new Error('未找到关联的学校');
       }
 
-      // 3. 获取第一个学校的门锁列表
       const school = schools[0];
       const locks = await client.getLocks(
         school.schoolNo,
@@ -52,20 +49,17 @@ export default function LoginPage() {
 
       console.log('门锁列表:', locks);
 
-      // 4. 保存到Store（会自动设置第一个锁为默认锁）
       setLocks(locks);
 
-      // 5. 成功反馈
       toast.success('登录成功', '正在跳转...');
       feedback.success();
 
-      // 6. 延迟跳转到默认锁详情页（第一个锁）
+      // 清除自动跳转标记，允许下次进入时自动跳转到默认门锁
+      sessionStorage.removeItem('hasAutoNavigated');
+
       setTimeout(() => {
-        if (locks.length > 0) {
-          router.push(`/lock/${locks[0].id}`);
-        } else {
-      router.push('/locks');
-        }
+        // 跳转到门锁列表，让列表页处理自动跳转到默认门锁
+        router.push('/locks');
       }, 1000);
 
     } catch (err) {
@@ -81,20 +75,16 @@ export default function LoginPage() {
     <>
       <div className="min-h-screen flex items-center justify-center px-4 py-8 safe-top safe-bottom">
         <div className="max-w-md w-full">
-          {/* 背景装饰 */}
           <div className="absolute top-0 left-0 w-96 h-96 bg-primary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-breathing" />
           <div className="absolute bottom-0 right-0 w-96 h-96 bg-secondary-200 rounded-full mix-blend-multiply filter blur-3xl opacity-30 animate-breathing" style={{ animationDelay: '1s' }} />
 
-          {/* 主卡片 */}
           <div className="relative card glass p-8">
-            {/* Logo和标题 */}
             <motion.div
               initial={{ y: -20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
               transition={{ delay: 0.2, duration: 0.5 }}
               className="text-center mb-8"
             >
-              {/* Logo图标 */}
               <motion.div
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
@@ -110,7 +100,6 @@ export default function LoginPage() {
               <p className="text-neutral-500">智能门锁 · 一触即开</p>
             </motion.div>
 
-            {/* 登录表单 */}
             <motion.form
               initial={{ y: 20, opacity: 0 }}
               animate={{ y: 0, opacity: 1 }}
@@ -118,7 +107,6 @@ export default function LoginPage() {
               onSubmit={handleLogin}
               className="space-y-5"
             >
-              {/* 手机号输入 */}
           <div>
                 <label htmlFor="username" className="block text-sm font-medium text-neutral-700 mb-2">
               手机号
@@ -147,7 +135,6 @@ export default function LoginPage() {
                 </motion.div>
           </div>
 
-              {/* 密码输入 */}
           <div>
                 <label htmlFor="password" className="block text-sm font-medium text-neutral-700 mb-2">
               密码
@@ -191,7 +178,6 @@ export default function LoginPage() {
                 </motion.div>
           </div>
 
-              {/* 登录按钮 */}
               <motion.button
             type="submit"
             disabled={loading || !username || !password}
@@ -221,7 +207,6 @@ export default function LoginPage() {
               </motion.button>
             </motion.form>
 
-            {/* 底部提示 */}
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
@@ -234,7 +219,6 @@ export default function LoginPage() {
             </motion.div>
         </div>
 
-          {/* 版本信息 */}
           <motion.p
             initial={{ opacity: 0 }}
             animate={{ opacity: 1 }}
@@ -246,7 +230,6 @@ export default function LoginPage() {
         </div>
       </div>
 
-      {/* Toast通知容器 */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );

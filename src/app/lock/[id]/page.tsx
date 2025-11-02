@@ -36,7 +36,6 @@ export default function LockDetailPage() {
   const [showShareWarning, setShowShareWarning] = useState(false);
   const [showDeleteConfirm, setShowDeleteConfirm] = useState(false);
   
-  // 长按分享按钮相关状态
   const [isLongPressing, setIsLongPressing] = useState(false);
   const [longPressProgress, setLongPressProgress] = useState(0);
   const [showLongPressTip, setShowLongPressTip] = useState(false);
@@ -45,33 +44,25 @@ export default function LockDetailPage() {
   const [tipDismissTimer, setTipDismissTimer] = useState<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
-    // 查找当前门锁
     const foundLock = locks.find(l => l.id === lockId);
     
     if (foundLock) {
-      // 只在初次加载或门锁数据真正变化时更新
       setLock(prevLock => {
-        // 初次加载
         if (!prevLock) {
           setIsInitialized(true);
           return foundLock;
         }
-        // 检查是否有实质性变化（label 可能会改变）
         if (prevLock.label !== foundLock.label) {
           return foundLock;
         }
-        // 其他情况保持原有数据，避免重新渲染
         return prevLock;
       });
     } else if (locks.length > 0 && isInitialized) {
-      // 如果有门锁数据但找不到当前门锁，跳转到列表页
       toast.error('门锁不存在', '请重新选择');
       router.push('/locks');
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lockId, locks, router]);
 
-  // 清理定时器
   useEffect(() => {
     return () => {
       if (longPressTimer) {
@@ -97,7 +88,6 @@ export default function LockDetailPage() {
     if (success) {
       feedback.success();
       toast.success('解锁成功', '门已打开');
-      // 延迟关闭对话框
       setTimeout(() => {
         setShowDialog(false);
       }, 2000);
@@ -118,9 +108,8 @@ export default function LockDetailPage() {
     router.push('/locks');
   };
 
-  // 长按分享按钮处理
-  const LONG_PRESS_DURATION = 800; // 长按时间（毫秒）
-  const PROGRESS_UPDATE_INTERVAL = 20; // 进度更新间隔（毫秒）
+  const LONG_PRESS_DURATION = 800;
+  const PROGRESS_UPDATE_INTERVAL = 20;
 
   const handleSharePressStart = (e: React.MouseEvent | React.TouchEvent) => {
     if (!lock) return;
@@ -129,7 +118,6 @@ export default function LockDetailPage() {
     setIsLongPressing(true);
     setLongPressProgress(0);
 
-    // 开始进度动画
     const startTime = Date.now();
     const interval = setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -142,7 +130,6 @@ export default function LockDetailPage() {
     }, PROGRESS_UPDATE_INTERVAL);
     setProgressInterval(interval);
 
-    // 设置长按完成定时器
     const timer = setTimeout(() => {
       handleShare();
       handleSharePressEnd();
@@ -154,7 +141,6 @@ export default function LockDetailPage() {
     setIsLongPressing(false);
     setLongPressProgress(0);
 
-    // 清理定时器和进度
     if (longPressTimer) {
       clearTimeout(longPressTimer);
       setLongPressTimer(null);
@@ -164,11 +150,9 @@ export default function LockDetailPage() {
       setProgressInterval(null);
     }
 
-    // 如果进度不足，显示提示
     if (longPressProgress > 0 && longPressProgress < 100) {
       setShowLongPressTip(true);
       
-      // 自动隐藏提示
       const dismissTimer = setTimeout(() => {
         setShowLongPressTip(false);
       }, 3000);
@@ -220,7 +204,6 @@ export default function LockDetailPage() {
 
   return (
     <>
-      {/* 长按提示软弹窗 */}
       <AnimatePresence>
         {showLongPressTip && (
           <motion.div
@@ -232,20 +215,17 @@ export default function LockDetailPage() {
           >
             <div className="mx-auto w-[calc(100%-2rem)] max-w-2xl mt-2 sm:mt-4">
               <div className="bg-gradient-to-r from-amber-500 to-amber-600 text-white px-4 sm:px-6 py-3 sm:py-4 rounded-xl sm:rounded-2xl shadow-2xl flex items-center gap-3 sm:gap-4 border border-amber-400">
-                {/* 图标 */}
                 <div className="flex-shrink-0">
                   <svg className="w-6 h-6 sm:w-7 sm:h-7" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2.5} d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
                   </svg>
                 </div>
                 
-                {/* 文字内容 */}
                 <div className="flex-1 min-w-0">
                   <p className="text-sm sm:text-base font-bold mb-0.5 sm:mb-1 tracking-wide">需要长按 0.8 秒</p>
                   <p className="text-xs sm:text-sm text-amber-50 tracking-wide">按住分享按钮直到进度条填满</p>
                 </div>
                 
-                {/* 关闭按钮 */}
                 <button
                   onClick={() => {
                     setShowLongPressTip(false);
@@ -266,7 +246,6 @@ export default function LockDetailPage() {
       </AnimatePresence>
 
       <div className="min-h-screen safe-top safe-bottom flex flex-col">
-        {/* 顶部导航 - 固定定位 */}
         <header className="glass fixed top-0 left-0 right-0 z-50 border-b border-neutral-100 safe-top">
           <div className="max-w-3xl mx-auto px-4 sm:px-6 py-4 flex items-center gap-4">
             <motion.button
@@ -283,7 +262,6 @@ export default function LockDetailPage() {
               <h1 className="text-xl font-bold text-gradient">门锁详情</h1>
             </div>
 
-            {/* 设置按钮 */}
             <motion.button
               onClick={() => {
                 feedback.buttonClick();
@@ -300,9 +278,7 @@ export default function LockDetailPage() {
           </div>
         </header>
 
-        {/* 主内容区域 - 添加顶部 padding 避免被 fixed header 遮挡 */}
         <main className="flex-1 flex flex-col max-w-3xl mx-auto w-full px-4 sm:px-6 py-8 pt-24 pb-32">
-          {/* 门锁大卡片 */}
           <motion.div
             key={lock.id}
             initial={{ scale: 0.95, opacity: 0 }}
@@ -310,9 +286,7 @@ export default function LockDetailPage() {
             transition={{ duration: 0.3 }}
             className="card p-6 mb-6 relative overflow-hidden"
           >
-            {/* 右上角按钮组 */}
             <div className="absolute top-4 right-4 z-20 flex items-center gap-2">
-              {/* 分享按钮 */}
               <motion.button
                 onMouseDown={handleSharePressStart}
                 onMouseUp={handleSharePressEnd}
@@ -333,7 +307,6 @@ export default function LockDetailPage() {
                 }}
                 title="长按分享门锁"
               >
-                {/* 进度条背景 */}
                 {isLongPressing && (
                   <motion.div
                     initial={{ scale: 0 }}
@@ -345,7 +318,6 @@ export default function LockDetailPage() {
                   />
                 )}
                 
-                {/* 进度环 */}
                 {isLongPressing && (
                   <svg className="absolute inset-0 w-full h-full -rotate-90" viewBox="0 0 100 100">
                     <circle
@@ -369,7 +341,6 @@ export default function LockDetailPage() {
                 </svg>
               </motion.button>
 
-              {/* 默认标签 */}
               {isDefault && (
                 <motion.div
                   initial={{ scale: 0 }}
@@ -386,11 +357,8 @@ export default function LockDetailPage() {
               )}
             </div>
             
-            {/* 卡片内容 */}
             <div className="relative z-10">
-              {/* 顶部区域 - 图标和名称 */}
               <div className="flex items-center gap-4 mb-6">
-                {/* 锁图标 - 更小更简洁 */}
                 <motion.div
                   initial={{ scale: 0, rotate: -90 }}
                   animate={{ scale: 1, rotate: 0 }}
@@ -402,7 +370,6 @@ export default function LockDetailPage() {
                   </svg>
                 </motion.div>
 
-                {/* 门锁名称 */}
                 <motion.div
                   initial={{ opacity: 0, x: -20 }}
                   animate={{ opacity: 1, x: 0 }}
@@ -415,14 +382,12 @@ export default function LockDetailPage() {
                 </motion.div>
               </div>
 
-              {/* 门锁信息 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.2 }}
                 className="space-y-4 mb-6"
               >
-                {/* 锁编号 */}
                 <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -433,7 +398,6 @@ export default function LockDetailPage() {
                   <span className="text-neutral-900 font-mono text-sm">{lock.lockNo.slice(0, 12)}...</span>
                 </div>
                 
-                {/* 连接状态 */}
                 <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-success-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -444,7 +408,6 @@ export default function LockDetailPage() {
                   <span className="text-neutral-900 text-sm font-medium">蓝牙 BLE</span>
                 </div>
 
-                {/* 安全等级 */}
                 <div className="flex items-center justify-between py-3 border-b border-neutral-100">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-primary-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -460,7 +423,6 @@ export default function LockDetailPage() {
                   </span>
                 </div>
 
-                {/* 默认状态 */}
                 <div className="flex items-center justify-between py-3">
                   <div className="flex items-center gap-2">
                     <svg className="w-4 h-4 text-amber-500" fill="currentColor" viewBox="0 0 20 20">
@@ -481,14 +443,12 @@ export default function LockDetailPage() {
                 </div>
               </motion.div>
 
-              {/* 操作按钮组 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.25 }}
                 className="space-y-3"
               >
-                {/* 设为默认按钮 */}
                 {!isDefault && (
                   <motion.button
                     onClick={handleSetAsDefault}
@@ -641,7 +601,6 @@ export default function LockDetailPage() {
                   onClick={(e) => e.stopPropagation()}
                   className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative"
                 >
-                  {/* 关闭按钮 */}
                   {(bleError || progress === 100) && (
                     <motion.button
                       initial={{ opacity: 0, scale: 0 }}
@@ -659,7 +618,6 @@ export default function LockDetailPage() {
                     </motion.button>
                   )}
 
-                  {/* 标题 */}
                   <motion.h3
                     initial={{ opacity: 0, y: -10 }}
                     animate={{ opacity: 1, y: 0 }}
@@ -668,10 +626,8 @@ export default function LockDetailPage() {
                     {lock.label}
                   </motion.h3>
 
-                  {/* 状态图标 */}
                   <div className="flex justify-center mb-6">
                     {bleError ? (
-                      // 错误图标
                       <motion.div
                         variants={errorIconVariants}
                         initial="hidden"
@@ -683,7 +639,6 @@ export default function LockDetailPage() {
                         </svg>
                       </motion.div>
                     ) : progress === 100 ? (
-                      // 成功图标
                       <motion.div
                         variants={successIconVariants}
                         initial="hidden"

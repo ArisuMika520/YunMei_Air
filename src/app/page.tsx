@@ -10,22 +10,21 @@ export default function HomePage() {
   const { locks, defaultLockId } = useUserStore();
 
   useEffect(() => {
-    // 检查是否有门锁数据，决定跳转到哪个页面
+    // 清除自动跳转标记，允许进入门锁列表后自动跳转
+    sessionStorage.removeItem('hasAutoNavigated');
+    
     const timer = setTimeout(() => {
-      if (defaultLockId) {
-        // 如果有默认锁，直接跳转到默认锁详情页
-        router.push(`/lock/${defaultLockId}`);
-      } else if (locks.length > 0) {
-        // 如果有锁但没有默认锁，跳转到列表页
-      router.push('/locks');
-    } else {
-        // 没有锁，跳转到登录页
-      router.push('/login');
-    }
-    }, 1500); // 显示1.5秒启动画面
+      if (locks.length > 0) {
+        // 如果有门锁，跳转到列表页（列表页会自动跳转到默认门锁）
+        router.push('/locks');
+      } else {
+        // 没有门锁，跳转到登录页
+        router.push('/login');
+      }
+    }, 1500);
 
     return () => clearTimeout(timer);
-  }, [locks, defaultLockId, router]);
+  }, [locks, router]);
 
   return (
     <motion.div
@@ -40,7 +39,6 @@ export default function HomePage() {
         transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
         className="text-center"
       >
-        {/* Logo动画 */}
         <motion.div
           initial={{ scale: 0, rotate: -180 }}
           animate={{ scale: 1, rotate: 0 }}
@@ -56,7 +54,6 @@ export default function HomePage() {
           </svg>
         </motion.div>
 
-        {/* 标题 */}
         <motion.h1
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -75,7 +72,6 @@ export default function HomePage() {
           智能门锁 · 一触即开
         </motion.p>
 
-        {/* Loading动画 */}
         <motion.div
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
@@ -114,7 +110,6 @@ export default function HomePage() {
           />
         </motion.div>
 
-        {/* 版本信息 */}
         <motion.p
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}

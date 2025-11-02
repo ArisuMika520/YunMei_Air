@@ -26,7 +26,6 @@ export function ShareLockDialog({ lock, isOpen, onClose }: ShareLockDialogProps)
 
   const generateQRCode = async () => {
     try {
-      // 生成包含门锁信息的 Base64 字符串
       const lockData = lock.toString(true); // headless = true
       const canvas = canvasRef.current;
       
@@ -40,7 +39,6 @@ export function ShareLockDialog({ lock, isOpen, onClose }: ShareLockDialogProps)
           },
         });
         
-        // 同时生成 data URL 用于下载
         const dataUrl = await QRCode.toDataURL(lockData, {
           width: 512,
           margin: 2,
@@ -94,7 +92,6 @@ export function ShareLockDialog({ lock, isOpen, onClose }: ShareLockDialogProps)
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative"
           >
-            {/* 关闭按钮 */}
             <motion.button
               onClick={() => {
                 feedback.buttonClick();
@@ -111,20 +108,17 @@ export function ShareLockDialog({ lock, isOpen, onClose }: ShareLockDialogProps)
               </svg>
             </motion.button>
 
-            {/* 标题 */}
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-neutral-900 mb-2">分享门锁</h3>
               <p className="text-neutral-500 text-sm">{lock.label}</p>
             </div>
 
-            {/* 二维码 */}
             <div className="bg-neutral-50 rounded-2xl p-6 mb-6 flex justify-center">
               <div className="bg-white p-4 rounded-xl shadow-sm">
                 <canvas ref={canvasRef} className="block" />
               </div>
             </div>
 
-            {/* 提示信息 */}
             <div className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-4 mb-6">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
@@ -140,7 +134,6 @@ export function ShareLockDialog({ lock, isOpen, onClose }: ShareLockDialogProps)
               </div>
             </div>
 
-            {/* 操作按钮 */}
             <div className="flex gap-3">
               <motion.button
                 onClick={handleCopyLink}

@@ -1,12 +1,12 @@
 {
   "name": "云梅Air - 智能门锁",
   "short_name": "云梅Air",
-  "description": "云梅门锁蓝牙解锁应用，支持离线使用",
+  "description": "云梅门锁蓝牙解锁应用，支持离线使用、PWA安装",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
   "background_color": "#ffffff",
-  "theme_color": "#2563eb",
+  "theme_color": "#5B9FD8",
   "orientation": "portrait-primary",
   "icons": [
     {

@@ -6,13 +6,10 @@
   --background: #ffffff;
   --foreground: #171717;
   
-  /* 主题色 - 默认粉红色 (330度) */
-  /* 使用空格分隔的 HSL 值，支持 Tailwind 的透明度修饰符 */
   --primary: 330 65% 60%;
   --primary-light: 330 70% 75%;
   --primary-dark: 330 60% 50%;
   
-  /* 完整色阶 - 用于 Tailwind */
   --primary-50: 330 65% 97%;
   --primary-100: 330 65% 93%;
   --primary-200: 330 65% 85%;
@@ -24,7 +21,6 @@
   --primary-800: 330 65% 25%;
   --primary-900: 330 65% 15%;
   
-  /* 智能渐变色 - 根据主题色自动计算 */
   --gradient-from: 330 75% 70%;
   --gradient-to: 270 75% 70%;
 }
@@ -47,7 +43,6 @@ body {
   touch-action: manipulation;
 }
 
-/* Air 轻量化 - 只保留基础 GPU 加速 */
 .card, .btn-primary, .btn-secondary, .btn-success {
   transform: translateZ(0);
 }
@@ -192,7 +187,6 @@ body {
     border-width: 3px;
   }
 
-  /* Range input 样式 */
   input[type="range"] {
     -webkit-appearance: none;
     appearance: none;

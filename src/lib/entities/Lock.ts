@@ -4,7 +4,7 @@
  */
 
 export class Lock {
-  label: string;              // 门锁标签（如：东区宿舍-101）
+  label: string;              // 门锁标签
   mac: string;                // MAC地址
   characteristicUuid: string; // 蓝牙特征UUID
   serviceUuid: string;        // 蓝牙服务UUID

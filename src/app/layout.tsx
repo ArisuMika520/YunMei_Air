@@ -7,9 +7,10 @@ export const viewport: Viewport = {
   maximumScale: 1,
   userScalable: false,
   themeColor: [
-    { media: "(prefers-color-scheme: light)", color: "#ffffff" },
-    { media: "(prefers-color-scheme: dark)", color: "#000000" }
-  ]
+    { media: "(prefers-color-scheme: light)", color: "#5B9FD8" },
+    { media: "(prefers-color-scheme: dark)", color: "#4A8BC2" }
+  ],
+  colorScheme: "light"
 };
 
 export const metadata: Metadata = {
@@ -24,7 +25,6 @@ export const metadata: Metadata = {
   generator: "Next.js",
   keywords: ["云梅", "智能门锁", "蓝牙开锁", "PWA", "离线应用"],
   referrer: "origin-when-cross-origin",
-  colorScheme: "light",
   creator: "Arisumika",
   publisher: "Arisumika",
   formatDetection: {
@@ -50,24 +50,25 @@ export const metadata: Metadata = {
     url: "/",
     siteName: "云梅Air",
     title: "云梅Air - 智能门锁",
-    description: "云梅门锁蓝牙解锁应用",
+    description: "云梅门锁蓝牙解锁应用，支持离线使用",
     images: [
       {
-        url: "/icon-512.png",
-        width: 512,
-        height: 512,
-        alt: "云梅Air"
+        url: "/og-image.png",
+        width: 1200,
+        height: 630,
+        alt: "云梅Air - 智能门锁"
       }
     ]
   },
   twitter: {
-    card: "summary",
+    card: "summary_large_image",
     title: "云梅Air - 智能门锁",
-    description: "云梅门锁蓝牙解锁应用",
-    images: ["/icon-512.png"]
+    description: "云梅门锁蓝牙解锁应用，支持离线使用",
+    images: ["/og-image.png"]
   },
   icons: {
     icon: [
+      { url: "/favicon.ico", sizes: "32x32" },
       { url: "/icon-72.png", sizes: "72x72", type: "image/png" },
       { url: "/icon-96.png", sizes: "96x96", type: "image/png" },
       { url: "/icon-128.png", sizes: "128x128", type: "image/png" },
@@ -78,13 +79,13 @@ export const metadata: Metadata = {
       { url: "/icon-512.png", sizes: "512x512", type: "image/png" }
     ],
     apple: [
-      { url: "/icon-152.png", sizes: "152x152", type: "image/png" },
-      { url: "/icon-192.png", sizes: "192x192", type: "image/png" }
+      { url: "/apple-touch-icon.png", sizes: "180x180", type: "image/png" }
     ],
     other: [
       {
         rel: "mask-icon",
-        url: "/icon-maskable-512.png"
+        url: "/icon-maskable-512.png",
+        color: "#5B9FD8"
       }
     ]
   },

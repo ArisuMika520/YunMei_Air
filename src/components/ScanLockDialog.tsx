@@ -74,13 +74,11 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
   };
 
   const handleScanError = (errorMessage: string) => {
-    // 扫描错误是正常的，不需要显示
     console.debug('扫描中...', errorMessage);
   };
 
   const parseLockData = (data: string) => {
     try {
-      // 尝试解析 Base64 编码的门锁数据
       const decoded = Buffer.from(data, 'base64').toString('utf-8');
       const parts = decoded.split('|');
 
@@ -97,7 +95,7 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
         parts[5], // username
         parts[6], // schoolNo
         parts[7], // lockNo
-        false // 暂时不标记为 shared，在添加时再标记
+        false
       );
 
       onSuccess(lock);
@@ -113,7 +111,6 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
     const file = e.target.files?.[0];
     if (!file) return;
 
-    // 验证文件类型
     if (!file.type.startsWith('image/')) {
       setError('请选择图片文件');
       feedback.error();
@@ -160,7 +157,6 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
             onClick={(e) => e.stopPropagation()}
             className="bg-white rounded-3xl shadow-2xl max-w-md w-full p-8 relative"
           >
-            {/* 关闭按钮 */}
             <motion.button
               onClick={handleClose}
               variants={buttonVariants}
@@ -174,13 +170,11 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
               </svg>
             </motion.button>
 
-            {/* 标题 */}
             <div className="text-center mb-6">
               <h3 className="text-2xl font-bold text-neutral-900 mb-2">扫码添加门锁</h3>
               <p className="text-neutral-500 text-sm">扫描好友分享的二维码</p>
             </div>
 
-            {/* 模式切换 */}
             <div className="flex gap-2 mb-6 bg-neutral-100 p-1 rounded-xl">
               <motion.button
                 onClick={() => {
@@ -232,7 +226,6 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
               </motion.button>
             </div>
 
-            {/* 扫描区域 */}
             <div className="mb-6">
               {scanMode === 'camera' ? (
                 <div className="bg-neutral-900 rounded-2xl overflow-hidden aspect-square relative">
@@ -282,7 +275,6 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
               )}
             </div>
 
-            {/* 错误提示 */}
             {error && (
               <motion.div
                 initial={{ opacity: 0, y: -10 }}
@@ -298,7 +290,6 @@ export function ScanLockDialog({ isOpen, onClose, onSuccess }: ScanLockDialogPro
               </motion.div>
             )}
 
-            {/* 提示信息 */}
             <div className="bg-blue-50 border-2 border-blue-100 rounded-2xl p-4">
               <div className="flex items-start gap-3">
                 <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center mt-0.5">
