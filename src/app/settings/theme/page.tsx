@@ -175,7 +175,6 @@ export default function ThemePage() {
   return (
     <>
       <div className="min-h-screen safe-top safe-bottom">
-        {/* 头部导航 - 固定定位 */}
         <header className="glass fixed top-0 left-0 right-0 z-50 border-b border-neutral-100 safe-top">
           <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
             <motion.button
@@ -197,9 +196,7 @@ export default function ThemePage() {
           </div>
         </header>
 
-        {/* 主内容 */}
         <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
-          {/* 主题颜色 */}
           <section className="card p-6 mb-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-neutral-900">主题颜色</h3>
@@ -218,7 +215,6 @@ export default function ThemePage() {
               </motion.button>
             </div>
             
-            {/* 预设颜色 */}
             <div className="grid grid-cols-4 gap-3 mb-4">
               {presetColors.map((color) => (
                 <motion.button
@@ -259,7 +255,6 @@ export default function ThemePage() {
               ))}
             </div>
 
-            {/* 十六进制颜色输入 */}
             <div className="bg-neutral-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-neutral-700">十六进制颜色</label>
@@ -286,7 +281,6 @@ export default function ThemePage() {
               <p className="text-xs text-neutral-500 mt-2">输入6位十六进制颜色代码（可选带#号）</p>
             </div>
 
-            {/* 色相滑块 */}
             <div className="bg-neutral-50 rounded-xl p-4">
               <div className="flex items-center justify-between mb-2">
                 <label className="text-sm font-medium text-neutral-700">自定义色相</label>
@@ -312,21 +306,17 @@ export default function ThemePage() {
               />
             </div>
 
-            {/* 主题预览 */}
             <div className="bg-neutral-50 rounded-xl p-4 mt-4">
               <div className="flex items-center justify-between mb-3">
                 <p className="text-xs font-medium text-neutral-600">主题预览</p>
                 <p className="text-xs text-neutral-400">实时效果</p>
               </div>
               
-              {/* 模拟页面预览 */}
               <div className="bg-white rounded-lg p-4 space-y-3 shadow-sm">
-                {/* 模拟标题 */}
                 <div className="text-center pb-2 border-b border-neutral-100">
                   <h3 className="text-xl font-bold text-gradient">我的门锁</h3>
                 </div>
                 
-                {/* 模拟门锁卡片 */}
                 <div className="space-y-2">
                   <div className="flex items-center gap-3 p-2 rounded-lg bg-neutral-50">
                     <div 
@@ -378,7 +368,6 @@ export default function ThemePage() {
             </div>
           </section>
 
-          {/* 背景图片 */}
           <section className="card p-6">
             <div className="flex items-center justify-between mb-3">
               <h3 className="text-sm font-bold text-neutral-900">背景图片</h3>
@@ -398,7 +387,6 @@ export default function ThemePage() {
             </div>
             
             <div className="space-y-3">
-              {/* 上传按钮 */}
               <div>
                 <input
                   ref={fileInputRef}
@@ -429,7 +417,6 @@ export default function ThemePage() {
                 </motion.button>
               </div>
 
-              {/* 当前背景预览 */}
               {themeConfig.backgroundImage && (
                 <motion.div
                   initial={{ opacity: 0, height: 0 }}
@@ -461,7 +448,6 @@ export default function ThemePage() {
                     </motion.button>
                   </div>
 
-                  {/* 背景图片透明度 */}
                   <div className="bg-neutral-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-sm font-medium text-neutral-700">背景透明度</label>
@@ -478,7 +464,6 @@ export default function ThemePage() {
                     />
                   </div>
 
-                  {/* 蒙版透明度 */}
                   <div className="bg-neutral-50 rounded-xl p-4">
                     <div className="flex items-center justify-between mb-2">
                       <label className="text-sm font-medium text-neutral-700">蒙版透明度</label>
@@ -499,7 +484,6 @@ export default function ThemePage() {
             </div>
           </section>
 
-          {/* 组件透明度 */}
           <section className="card p-6">
             <div className="flex items-center justify-between mb-3">
               <div>
@@ -528,11 +512,9 @@ export default function ThemePage() {
               </div>
             </div>
 
-            {/* 组件透明度预览 */}
             <div className="mt-4 space-y-3">
               <p className="text-xs font-medium text-neutral-600 mb-2">效果预览</p>
               
-              {/* 模拟卡片 */}
               <div 
                 className="rounded-xl p-4 border border-neutral-100 transition-all duration-200"
                 style={{ 
@@ -575,7 +557,6 @@ export default function ThemePage() {
               </div>
             </div>
 
-            {/* 提示信息 */}
             <div className="mt-4 flex items-start gap-2 p-3 bg-blue-50 border border-blue-100 rounded-xl">
               <svg className="w-4 h-4 text-blue-500 mt-0.5 flex-shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />

@@ -10,6 +10,7 @@ import { useToast } from '@/lib/hooks/useToast';
 import { ToastContainer } from '@/components/Toast';
 import { ScanLockDialog } from '@/components/ScanLockDialog';
 import { ShareLockDialog } from '@/components/ShareLockDialog';
+import { LockListSkeleton } from '@/components/Skeleton';
 import { 
   fadeVariants,
   buttonVariants,
@@ -41,9 +42,24 @@ export default function LocksPage() {
   
   const [showLongPressTip, setShowLongPressTip] = useState(false);
   const [tipDismissTimer, setTipDismissTimer] = useState<NodeJS.Timeout | null>(null);
+  
+  // 加载状态
+  const [isLoading, setIsLoading] = useState(true);
+
+  // 模拟加载数据（等待 Zustand hydration）
+  useEffect(() => {
+    // 短暂延迟以确保数据已加载
+    const timer = setTimeout(() => {
+      setIsLoading(false);
+    }, 300);
+    
+    return () => clearTimeout(timer);
+  }, []);
 
   // 自动跳转到默认门锁（仅在会话首次访问时）
   useEffect(() => {
+    if (isLoading) return;
+    
     // 检查是否已经完成过自动跳转
     const hasAutoNavigated = sessionStorage.getItem('hasAutoNavigated');
     
@@ -60,7 +76,7 @@ export default function LocksPage() {
         return () => clearTimeout(timer);
       }
     }
-  }, [defaultLockId, locks, router]);
+  }, [defaultLockId, locks, router, isLoading]);
 
   useEffect(() => {
     return () => {
@@ -203,6 +219,24 @@ export default function LocksPage() {
     setShowShareWarning(false);
     setShowShareDialog(true);
   };
+
+  // 显示骨架屏
+  if (isLoading) {
+    return (
+      <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50">
+        <div className="bg-white/80 backdrop-blur-xl shadow-sm border-b border-gray-100">
+          <div className="flex items-center justify-between p-4">
+            <h1 className="text-xl font-bold text-gray-800">我的门锁</h1>
+            <div className="flex gap-2">
+              <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+              <div className="w-10 h-10 rounded-full bg-gray-200 animate-pulse" />
+            </div>
+          </div>
+        </div>
+        <LockListSkeleton count={3} />
+      </div>
+    );
+  }
 
   if (locks.length === 0) {
     return (

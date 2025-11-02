@@ -225,7 +225,7 @@ export default function LoginPage() {
             transition={{ delay: 0.8, duration: 0.5 }}
             className="text-center text-xs text-neutral-400 mt-6"
           >
-            v0.1.0 · Made by ArisuMika❤️
+            v1.0.1 · Made by ArisuMika❤️
           </motion.p>
         </div>
       </div>

@@ -1,13 +1,14 @@
 /**
  * Web Bluetooth Hook
  * 用于React组件中的蓝牙操作
+ * 支持设备缓存和清理
  */
 
 'use client';
 
 import { useState, useCallback } from 'react';
 import { Lock } from '../entities/Lock';
-import { unlockProcess, isBLESupported } from '../utils/ble';
+import { unlockProcess, isBLESupported, disconnectAll, disconnectLock, getCacheStats } from '../utils/ble';
 
 export interface BLEState {
   isUnlocking: boolean;
@@ -76,9 +77,6 @@ export function useBLE() {
     }
   }, []);
 
-  /**
-   * 重置状态
-   */
   const reset = useCallback(() => {
     setState({
       isUnlocking: false,
@@ -88,17 +86,29 @@ export function useBLE() {
     });
   }, []);
 
-  /**
-   * 检查蓝牙支持
-   */
   const checkSupport = useCallback((): boolean => {
     return isBLESupported();
+  }, []);
+
+  const cleanup = useCallback(() => {
+    disconnectAll();
+  }, []);
+
+  const disconnect = useCallback((lockId: string) => {
+    disconnectLock(lockId);
+  }, []);
+
+  const getStats = useCallback(() => {
+    return getCacheStats();
   }, []);
 
   return {
     ...state,
     unlock,
     reset,
-    checkSupport
+    checkSupport,
+    cleanup,
+    disconnect,
+    getStats
   };
 }

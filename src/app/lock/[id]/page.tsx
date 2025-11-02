@@ -9,6 +9,7 @@ import { Lock } from '@/lib/entities/Lock';
 import { useToast } from '@/lib/hooks/useToast';
 import { ToastContainer } from '@/components/Toast';
 import { ShareLockDialog } from '@/components/ShareLockDialog';
+import { LockDetailSkeleton } from '@/components/Skeleton';
 import { 
   fadeVariants,
   buttonVariants,
@@ -187,6 +188,11 @@ export default function LockDetailPage() {
       router.push('/locks');
     }, 500);
   };
+
+  // 显示骨架屏
+  if (!lock && !isInitialized) {
+    return <LockDetailSkeleton />;
+  }
 
   if (!lock) {
     return (
@@ -464,7 +470,6 @@ export default function LockDetailPage() {
                   </motion.button>
                 )}
 
-                {/* 删除按钮（仅分享获得的门锁） */}
                 {canRemoveLock(lock.id) && (
                   <motion.button
                     onClick={handleDeleteClick}
@@ -483,10 +488,8 @@ export default function LockDetailPage() {
             </div>
           </motion.div>
 
-          {/* 占位符，确保按钮在底部 */}
           <div className="flex-1" />
 
-          {/* 侧边快捷解锁区域 - 方便手腕/手掌操作 */}
           {sideButtonPosition !== 'off' && (
             <motion.div
               initial={{ x: sideButtonPosition === 'left' ? -100 : 100, opacity: 0 }}
@@ -511,7 +514,6 @@ export default function LockDetailPage() {
             </motion.div>
           )}
 
-          {/* 底部开锁按钮 - 固定在底部，方便单手操作 */}
           <motion.div
             initial={{ y: 100, opacity: 0 }}
             animate={{ y: 0, opacity: 1 }}
@@ -519,7 +521,6 @@ export default function LockDetailPage() {
             className="fixed bottom-0 left-0 right-0 px-6 pb-8 pt-4 bg-gradient-to-t from-white via-white to-transparent z-10"
             style={{ paddingBottom: 'max(2rem, env(safe-area-inset-bottom) + 1rem)' }}
           >
-            {/* 大号主按钮 - 增大触摸区域 */}
             <motion.button
               onClick={handleUnlock}
               disabled={isUnlocking}
@@ -529,14 +530,12 @@ export default function LockDetailPage() {
               whileTap={{ scale: 0.96 }}
               className="btn-primary w-full h-16 text-lg font-bold rounded-3xl shadow-2xl active:shadow-lg transition-all relative overflow-hidden disabled:opacity-60 disabled:cursor-not-allowed"
             >
-              {/* 按钮背景动效 */}
               <motion.div
                 className="absolute inset-0 bg-gradient-to-r from-primary-400 to-primary-600 opacity-0"
                 whileHover={{ opacity: 0.2 }}
                 transition={{ duration: 0.2 }}
               />
               
-              {/* 点击涟漪效果 */}
               <motion.div
                 className="absolute inset-0 bg-white rounded-3xl"
                 initial={{ scale: 0, opacity: 0.5 }}
@@ -563,7 +562,6 @@ export default function LockDetailPage() {
               )}
             </motion.button>
             
-            {/* 视觉提示 - 向上滑动手势 */}
             <motion.div
               initial={{ opacity: 0, y: 10 }}
               animate={{ opacity: 0.5, y: 0 }}
@@ -575,11 +573,9 @@ export default function LockDetailPage() {
           </motion.div>
         </main>
 
-        {/* 解锁进度对话框 */}
         <AnimatePresence mode="wait">
           {showDialog && (
             <>
-              {/* 背景遮罩 */}
               <motion.div
                 variants={modalBackdropVariants}
                 initial="hidden"
@@ -592,7 +588,6 @@ export default function LockDetailPage() {
                   }
                 }}
               >
-                {/* 对话框 */}
                 <motion.div
                   variants={modalVariants}
                   initial="hidden"
@@ -663,7 +658,6 @@ export default function LockDetailPage() {
                         </motion.svg>
                       </motion.div>
                     ) : (
-                      // 解锁中图标
                       <motion.div
                         variants={lockIconVariants}
                         animate="unlocking"
@@ -676,7 +670,6 @@ export default function LockDetailPage() {
                     )}
                   </div>
 
-                  {/* 状态文字 */}
                   <motion.div
                     initial={{ opacity: 0 }}
                     animate={{ opacity: 1 }}
@@ -691,14 +684,12 @@ export default function LockDetailPage() {
                     </p>
                   </motion.div>
 
-                  {/* 进度条 */}
                   {!bleError && progress < 100 && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       className="mb-6"
                     >
-                      {/* 百分比 */}
                       <div className="flex justify-center mb-3">
                         <motion.span
                           key={progress}
@@ -710,7 +701,6 @@ export default function LockDetailPage() {
                         </motion.span>
                       </div>
 
-                      {/* 进度条 */}
                       <div className="relative h-3 bg-neutral-100 rounded-full overflow-hidden">
                         <motion.div
                           className="absolute inset-y-0 left-0 bg-primary-500 rounded-full"
@@ -718,7 +708,6 @@ export default function LockDetailPage() {
                           animate={{ width: `${progress}%` }}
                           transition={{ duration: 0.3, ease: [0.16, 1, 0.3, 1] }}
                         >
-                          {/* 光效动画 */}
                           <motion.div
                             className="absolute inset-0 bg-white/20 rounded-full"
                             animate={{ x: ['-100%', '200%'] }}
@@ -729,7 +718,6 @@ export default function LockDetailPage() {
                     </motion.div>
                   )}
 
-                  {/* 错误信息 */}
                   {bleError && (
                     <motion.div
                       initial={{ opacity: 0, y: 10 }}
@@ -741,7 +729,6 @@ export default function LockDetailPage() {
                     </motion.div>
                   )}
 
-                  {/* 关闭按钮 (底部) */}
                   {(bleError || progress === 100) && (
                     <motion.button
                       initial={{ opacity: 0, y: 20 }}
@@ -770,7 +757,6 @@ export default function LockDetailPage() {
         </AnimatePresence>
       </div>
 
-      {/* 分享危险警告对话框 */}
       <AnimatePresence mode="wait">
         {showShareWarning && (
           <motion.div
@@ -789,7 +775,6 @@ export default function LockDetailPage() {
               onClick={(e) => e.stopPropagation()}
               className="bg-white rounded-2xl shadow-2xl max-w-sm w-full p-5 border-4 border-error-500 max-h-[90vh] overflow-y-auto"
             >
-              {/* 危险图标 */}
               <div className="text-center mb-4">
                 <motion.div
                   initial={{ scale: 0 }}
@@ -815,7 +800,6 @@ export default function LockDetailPage() {
                   transition={{ delay: 0.2 }}
                   className="text-xl font-bold text-error-600 mb-2"
                 >
-                  ⚠️ 危险操作
                 </motion.h3>
 
                 <motion.div
@@ -824,7 +808,6 @@ export default function LockDetailPage() {
                   transition={{ delay: 0.3 }}
                   className="space-y-3 text-left text-sm"
                 >
-                  {/* 警告信息卡片 */}
                   <div className="bg-error-50 border border-error-200 rounded-xl p-3">
                     <p className="text-error-800 font-semibold mb-1 text-xs flex items-center gap-1.5">
                       <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -837,7 +820,6 @@ export default function LockDetailPage() {
                     </p>
                   </div>
 
-                  {/* 安全提示 */}
                   <div className="bg-amber-50 border border-amber-200 rounded-xl p-3">
                     <p className="text-amber-800 font-semibold mb-1 text-xs flex items-center gap-1.5">
                       <svg className="w-4 h-4 flex-shrink-0" fill="currentColor" viewBox="0 0 20 20">
@@ -851,7 +833,6 @@ export default function LockDetailPage() {
                     </ul>
                   </div>
 
-                  {/* 风险说明 */}
                   <div className="bg-neutral-50 border border-neutral-200 rounded-xl p-3">
                     <p className="text-neutral-700 text-xs leading-relaxed">
                       <span className="font-semibold text-neutral-900 block mb-1">对方可以：</span>
@@ -863,14 +844,12 @@ export default function LockDetailPage() {
                 </motion.div>
               </div>
 
-              {/* 操作按钮 */}
               <motion.div
                 initial={{ opacity: 0, y: 20 }}
                 animate={{ opacity: 1, y: 0 }}
                 transition={{ delay: 0.4 }}
                 className="flex flex-col gap-2"
               >
-                {/* 确认分享按钮 */}
                 <motion.button
                   onClick={handleConfirmShare}
                   variants={buttonVariants}
@@ -882,7 +861,6 @@ export default function LockDetailPage() {
                   我已了解，继续分享
                 </motion.button>
 
-                {/* 取消按钮 */}
                 <motion.button
                   onClick={() => {
                     feedback.buttonClick();
@@ -902,14 +880,12 @@ export default function LockDetailPage() {
         )}
       </AnimatePresence>
 
-      {/* 分享对话框 */}
       <ShareLockDialog
         lock={lock}
         isOpen={showShareDialog}
         onClose={() => setShowShareDialog(false)}
       />
 
-      {/* 删除确认对话框 */}
       <AnimatePresence mode="wait">
         {showDeleteConfirm && (
           <motion.div
@@ -971,7 +947,6 @@ export default function LockDetailPage() {
         )}
       </AnimatePresence>
 
-      {/* Toast通知容器 */}
       <ToastContainer toasts={toasts} onClose={removeToast} />
     </>
   );

@@ -1,6 +1,6 @@
 /**
  * 用户状态管理（Zustand）
- * 替代原项目的 Pinia Store
+ * 使用 IndexedDB 存储
  */
 
 'use client';
@@ -9,6 +9,7 @@ import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import { User } from '@/lib/entities/User';
 import { Lock } from '@/lib/entities/Lock';
+import { createIndexedDBStorage } from '@/lib/utils/storage';
 
 interface ThemeConfig {
   primaryHue: number;
@@ -119,7 +120,7 @@ export const useUserStore = create<UserState>()(
     }),
     {
       name: 'yunmei-storage',
-      storage: createJSONStorage(() => localStorage),
+      storage: createJSONStorage(() => createIndexedDBStorage()),
       partialize: (state) => ({
         user: state.user ? state.user.toJSON() : null,
         locks: state.locks.map(lock => lock.toJSON()),
@@ -133,6 +134,8 @@ export const useUserStore = create<UserState>()(
             state.user = User.fromJSON(state.user);
           }
           state.locks = state.locks.map((lockData: any) => Lock.fromJSON(lockData));
+          
+          console.log('[Store] 数据已从 IndexedDB 恢复');
         }
       }
     }
