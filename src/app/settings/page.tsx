@@ -36,20 +36,6 @@ export default function SettingsPage() {
       link: '/settings/side-button'
     },
     {
-      id: 'offline-page',
-      title: '离线独立页面',
-      description: '适用于 Bluefy 等浏览器，可保存到主屏幕',
-      icon: (
-        <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M12 18h.01M8 21h8a2 2 0 002-2V5a2 2 0 00-2-2H8a2 2 0 00-2 2v14a2 2 0 002 2z" />
-        </svg>
-      ),
-      bgColor: 'bg-green-100',
-      iconColor: 'text-green-600',
-      link: '/offline-standalone.html',
-      external: true
-    },
-    {
       id: 'offline-test',
       title: '离线功能测试',
       description: '检查离线功能和缓存状态',
@@ -66,6 +52,7 @@ export default function SettingsPage() {
 
   return (
     <div className="min-h-screen safe-top safe-bottom">
+      {/* 头部导航 - 固定定位 */}
       <header className="glass fixed top-0 left-0 right-0 z-50 border-b border-neutral-100 safe-top">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex items-center gap-4">
           <motion.button
@@ -87,6 +74,7 @@ export default function SettingsPage() {
         </div>
       </header>
 
+      {/* 主内容 */}
       <main className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-8 pt-24">
         <div className="space-y-3">
           {settingsSections.map((section, index) => (
@@ -94,11 +82,7 @@ export default function SettingsPage() {
               key={section.id}
               onClick={() => {
                 feedback.buttonClick();
-                if ('external' in section && section.external) {
-                  window.open(section.link, '_blank');
-                } else {
-                  router.push(section.link);
-                }
+                router.push(section.link);
               }}
               variants={buttonVariants}
               initial="idle"
@@ -110,12 +94,14 @@ export default function SettingsPage() {
               }}
             >
               <div className="flex items-center gap-4">
+                {/* 图标 */}
                 <div className={`flex-shrink-0 w-12 h-12 ${section.bgColor} rounded-xl flex items-center justify-center group-hover:scale-110 transition-transform`}>
                   <div className={section.iconColor}>
                     {section.icon}
                   </div>
                 </div>
                 
+                {/* 文字内容 */}
                 <div className="flex-1 min-w-0">
                   <h2 className="text-lg font-bold text-neutral-900 mb-1 group-hover:text-primary-600 transition-colors">
                     {section.title}
@@ -125,6 +111,7 @@ export default function SettingsPage() {
                   </p>
                 </div>
                 
+                {/* 箭头 */}
                 <div className="flex-shrink-0">
                   <svg 
                     className="w-6 h-6 text-neutral-400 group-hover:text-primary-600 group-hover:translate-x-1 transition-all" 
@@ -140,6 +127,7 @@ export default function SettingsPage() {
           ))}
         </div>
 
+        {/* 使用说明 */}
         <section className="card p-6 bg-gradient-to-br from-blue-50 to-indigo-50 border-2 border-blue-100 mt-6">
           <div className="flex items-start gap-3">
             <div className="flex-shrink-0 w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center">
@@ -148,15 +136,15 @@ export default function SettingsPage() {
               </svg>
             </div>
             <div className="flex-1">
-              <h3 className="font-bold text-blue-900 mb-2">使用提示</h3>
+              <h3 className="font-bold text-blue-900 mb-2">💡 使用提示</h3>
               <ul className="space-y-2 text-sm text-blue-800">
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 mt-0.5">•</span>
-                  <span>点击上方选项进入设置页面</span>
+                  <span>点击上方选项进入详细设置页面</span>
                 </li>
                 <li className="flex items-start gap-2">
                   <span className="text-blue-500 mt-0.5">•</span>
-                  <span>所有设置会自动保存</span>
+                  <span>所有设置会自动保存到本地</span>
                 </li>
               </ul>
             </div>
