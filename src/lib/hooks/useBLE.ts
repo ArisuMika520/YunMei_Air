@@ -85,7 +85,7 @@ export function useBLE() {
       error: null
     });
   }, []);
-
+ 
   const checkSupport = useCallback((): boolean => {
     return isBLESupported();
   }, []);
