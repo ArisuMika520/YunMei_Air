@@ -106,6 +106,11 @@ export async function unlockProcess(
         onProgress?.(70, '发送解锁指令...');
         
         try {
+          if (!cached.server.connected) {
+            console.warn('[BLE] 缓存的连接已断开，尝试重新连接...');
+            throw new Error('Connection lost');
+          }
+          
           await writeCharacteristic(cached.characteristic, password);
           onProgress?.(100, '解锁成功！');
           
@@ -117,13 +122,22 @@ export async function unlockProcess(
         
         try {
           if (cached.device.gatt) {
+            onProgress?.(30, '重新连接中...');
+            
+            if (cached.device.gatt.connected) {
+              cached.device.gatt.disconnect();
+            }
+            
             const server = await cached.device.gatt.connect();
+            
+            onProgress?.(50, '获取服务...');
             const characteristic = await getCharacteristic(
               server,
               lock.serviceUuid,
               lock.characteristicUuid
             );
             
+            onProgress?.(80, '发送解锁指令...');
             await writeCharacteristic(characteristic, password);
             
             bleCache.set(lock.id, cached.device, server, characteristic);
