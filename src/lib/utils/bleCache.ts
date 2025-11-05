@@ -13,7 +13,7 @@ interface CachedDevice {
 
 class BLECacheManager {
   private cache: Map<string, CachedDevice> = new Map();
-  private readonly CACHE_TIMEOUT = 60000; // 60秒缓存时间
+  private readonly CACHE_TIMEOUT = 30000; // 30秒缓存时间
   private cleanupTimer: NodeJS.Timeout | null = null;
 
   get(lockId: string): CachedDevice | null {
@@ -22,11 +22,25 @@ class BLECacheManager {
     if (!cached) return null;
     
     if (Date.now() - cached.lastUsed > this.CACHE_TIMEOUT) {
+      console.log('[BLECache] 缓存已过期:', lockId);
       this.remove(lockId);
       return null;
     }
     
     if (!cached.server.connected) {
+      console.log('[BLECache] 服务器已断开:', lockId);
+      this.remove(lockId);
+      return null;
+    }
+    
+    if (!cached.device.gatt?.connected) {
+      console.log('[BLECache] 设备 GATT 已断开:', lockId);
+      this.remove(lockId);
+      return null;
+    }
+    
+    if (!cached.characteristic.service || !cached.characteristic.service.device) {
+      console.log('[BLECache] Characteristic 已失效:', lockId);
       this.remove(lockId);
       return null;
     }

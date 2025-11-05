@@ -111,12 +111,16 @@ export async function unlockProcess(
             throw new Error('Connection lost');
           }
           
+          if (!cached.characteristic.service || !cached.characteristic.service.device.gatt?.connected) {
+            console.warn('[BLE] Characteristic 已失效');
+            throw new Error('Characteristic invalid');
+          }
+          
           await writeCharacteristic(cached.characteristic, password);
           onProgress?.(100, '解锁成功！');
           
           return;
-        
-      } catch (writeError) {
+        } catch (writeError) {
         console.warn('[BLE] 缓存连接失败，尝试重新连接...', writeError);
         bleCache.remove(lock.id);
         
@@ -126,9 +130,12 @@ export async function unlockProcess(
             
             if (cached.device.gatt.connected) {
               cached.device.gatt.disconnect();
+              await new Promise(resolve => setTimeout(resolve, 100));
             }
             
             const server = await cached.device.gatt.connect();
+            
+            await new Promise(resolve => setTimeout(resolve, 100));
             
             onProgress?.(50, '获取服务...');
             const characteristic = await getCharacteristic(
@@ -163,6 +170,8 @@ export async function unlockProcess(
       connectGATT(device),
       Promise.resolve(generatePassword(lock.secret))
     ]);
+
+    await new Promise(resolve => setTimeout(resolve, 100));
 
     onProgress?.(50, '已连接到设备');
 
