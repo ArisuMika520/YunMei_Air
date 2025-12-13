@@ -4,7 +4,7 @@
   "private": true,
   "scripts": {
     "dev": "next dev -H 0.0.0.0",
-    "build": "next build",
+    "build": "next build --webpack",
     "start": "next start -H 0.0.0.0",
     "stop": "next stop",
     "lint": "next lint",
@@ -26,10 +26,10 @@
     "framer-motion": "^12.23.24",
     "html5-qrcode": "^2.3.8",
     "idb-keyval": "^6.2.2",
-    "next": "^15.0.3",
+    "next": "^16.0.7",
     "qrcode": "^1.5.4",
-    "react": "^18.3.1",
-    "react-dom": "^18.3.1",
+    "react": "^19.2.1",
+    "react-dom": "^19.2.1",
     "zustand": "^5.0.2"
   },
   "devDependencies": {

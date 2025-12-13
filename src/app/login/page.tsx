@@ -58,16 +58,24 @@ export default function LoginPage() {
 
       setLocks(locks);
 
-      toast.success('登录成功', '正在跳转...');
-      feedback.success();
-
-      // 清除自动跳转标记，允许下次进入时自动跳转到默认门锁
-      sessionStorage.removeItem('hasAutoNavigated');
-
-      setTimeout(() => {
-        // 跳转到门锁列表，让列表页处理自动跳转到默认门锁
-        router.push('/locks');
-      }, 1000);
+      // 检查门锁列表是否为空
+      if (locks.length === 0) {
+        toast.warning('登录成功', '但未找到关联的门锁');
+        feedback.success();
+        // 仍然跳转到门锁列表页，让用户看到空状态
+        setTimeout(() => {
+          router.push('/locks');
+        }, 1500);
+      } else {
+        toast.success('登录成功', '正在跳转...');
+        feedback.success();
+        // 清除自动跳转标记，允许下次进入时自动跳转到默认门锁
+        sessionStorage.removeItem('hasAutoNavigated');
+        setTimeout(() => {
+          // 跳转到门锁列表，让列表页处理自动跳转到默认门锁
+          router.push('/locks');
+        }, 1000);
+      }
 
     } catch (err) {
       const errorMessage = err instanceof Error ? err.message : '登录失败';

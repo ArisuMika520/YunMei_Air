@@ -66,9 +66,9 @@ export class YunmeiClient {
         method: 'POST',
         body: { userId: this.userId },
         headers: {
-          'token_data': this.token,
-          'token_userId': this.userId,
-          'tokenUserId': this.userId
+          'X-Token-Data': this.token,
+          'X-Token-UserId': this.userId,
+          'X-TokenUserId': this.userId
         }
       }
     );
@@ -107,19 +107,70 @@ export class YunmeiClient {
           userId: this.userId
         },
         headers: {
-          'token_data': schoolToken,
-          'token_userId': this.userId,
-          'tokenUserId': this.userId
+          'X-Token-Data': schoolToken,
+          'X-Token-UserId': this.userId,
+          'X-TokenUserId': this.userId
         }
       }
     );
+
+    // 检查响应格式
+    if (!response) {
+      throw new Error('获取门锁列表失败：服务器未返回数据');
+    }
+
+    // 检查是否是错误响应
+    if (response.error || response.rawResponse) {
+      const errorMsg = response.message || response.msg || '获取门锁列表失败：服务器返回了错误响应';
+      console.error('[YunmeiClient] 获取门锁列表失败:', {
+        error: response.error,
+        message: response.message,
+        rawResponse: response.rawResponse?.substring(0, 200)
+      });
+      throw new Error(errorMsg);
+    }
+
+    // 检查响应是否是数组格式
+    let locksArray: any[];
+    
+    if (Array.isArray(response)) {
+      locksArray = response;
+    } else {
+      // 检查是否是包装在对象中的数组（如 { data: [...] }）
+      if (response.data && Array.isArray(response.data)) {
+        locksArray = response.data;
+      } else if (response.list && Array.isArray(response.list)) {
+        locksArray = response.list;
+      } else if (response.result && Array.isArray(response.result)) {
+        locksArray = response.result;
+      } else if (response.success === false && response.msg) {
+        // 服务器返回了错误信息
+        throw new Error(response.msg);
+      } else {
+        // 未知的响应格式
+        console.error('[YunmeiClient] 未知的响应格式:', response);
+        throw new Error('获取门锁列表失败：服务器返回了未知的响应格式');
+      }
+    }
+
+    // 如果响应是空数组，返回空数组（不是错误）
+    if (locksArray.length === 0) {
+      console.log('[YunmeiClient] 门锁列表为空');
+      return [];
+    }
 
     // MD5加密用户名
     const hashedUsername = CryptoJS.MD5(username).toString();
 
     // 构造Lock对象
-    return response.map((lockData: any) => {
-      const label = `${lockData.buildName}-${lockData.dormNo}`;
+    return locksArray.map((lockData: any) => {
+      // 验证必要字段
+      if (!lockData.lockNo || !lockData.lockCharacterUuid || !lockData.lockServiceUuid || !lockData.lockSecret) {
+        console.warn('[YunmeiClient] 门锁数据不完整，跳过:', lockData);
+        return null;
+      }
+
+      const label = `${lockData.buildName || '未知'}-${lockData.dormNo || '未知'}`;
 
       return new Lock(
         label,
@@ -131,6 +182,6 @@ export class YunmeiClient {
         schoolNo,
         lockData.lockNo
       );
-    });
+    }).filter((lock): lock is Lock => lock !== null); // 过滤掉 null 值
   }
 }

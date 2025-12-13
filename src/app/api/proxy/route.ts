@@ -24,6 +24,18 @@ export async function POST(request: NextRequest) {
       method,
       headers: Object.fromEntries(request.headers.entries())
     });
+    
+    // 调试：打印所有可能的认证头部
+    console.log('[API Proxy] 认证头部检查:', {
+      'token_data': request.headers.get('token_data'),
+      'token-data': request.headers.get('token-data'),
+      'tokendata': request.headers.get('tokendata'),
+      'token_userid': request.headers.get('token_userid'),
+      'token-userid': request.headers.get('token-userid'),
+      'tokenuserid': request.headers.get('tokenuserid'),
+      'x-token-data': request.headers.get('x-token-data'),
+      'x-token-userid': request.headers.get('x-token-userid')
+    });
 
     // 获取请求体（如果有）
     let bodyData: any = null;
@@ -49,13 +61,25 @@ export async function POST(request: NextRequest) {
     };
 
     // 将认证头部转发到目标服务器
-    const authHeaders = ['token_data', 'token_userId', 'tokenUserId'];
-    authHeaders.forEach(header => {
-      const value = request.headers.get(header);
+    // 注意: HTTP/2 会将头部转为小写，所以需要用小写读取
+    // 使用 X- 前缀的标准自定义头部以避免被过滤
+    const authHeaderMappings = [
+      // 新格式：X- 前缀（推荐）
+      { client: 'x-token-data', server: 'token_data' },
+      { client: 'x-token-userid', server: 'token_userId' },
+      { client: 'x-tokenuserid', server: 'tokenUserId' },
+      // 旧格式兼容（可能被浏览器/CDN过滤）
+      { client: 'token_data', server: 'token_data' },
+      { client: 'token_userid', server: 'token_userId' },
+      { client: 'tokenuserid', server: 'tokenUserId' }
+    ];
+    
+    authHeaderMappings.forEach(({ client, server }) => {
+      const value = request.headers.get(client);
       if (value) {
         requestInit.headers = {
           ...requestInit.headers,
-          [header]: value
+          [server]: value
         };
       }
     });
@@ -105,7 +129,25 @@ export async function POST(request: NextRequest) {
       responseData = JSON.parse(responseText);
     } catch (e) {
       console.error('[API Proxy] JSON 解析失败，返回原始文本');
-      responseData = { rawResponse: responseText };
+      // 如果响应不是 JSON，尝试提取错误信息
+      // 检查是否是 HTML 错误页面
+      if (responseText.trim().startsWith('<')) {
+        // 尝试从 HTML 中提取错误信息
+        const titleMatch = responseText.match(/<title>(.*?)<\/title>/i);
+        const errorMsg = titleMatch ? titleMatch[1] : '服务器返回了 HTML 响应';
+        responseData = { 
+          error: true,
+          message: errorMsg,
+          rawResponse: responseText.substring(0, 1000) // 只保留前1000字符
+        };
+      } else {
+        // 纯文本响应
+        responseData = { 
+          error: true,
+          message: '服务器返回了非 JSON 格式的响应',
+          rawResponse: responseText.substring(0, 1000) // 只保留前1000字符
+        };
+      }
     }
 
     // 返回响应（带 CORS 头部）
@@ -114,7 +156,7 @@ export async function POST(request: NextRequest) {
       headers: {
         'Access-Control-Allow-Origin': '*',
         'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-        'Access-Control-Allow-Headers': 'Content-Type, token_data, token_userId, tokenUserId'
+        'Access-Control-Allow-Headers': 'Content-Type, X-Token-Data, X-Token-UserId, X-TokenUserId, token_data, token_userId, tokenUserId'
       }
     });
 
@@ -137,7 +179,7 @@ export async function OPTIONS(request: NextRequest) {
     headers: {
       'Access-Control-Allow-Origin': '*',
       'Access-Control-Allow-Methods': 'GET, POST, OPTIONS',
-      'Access-Control-Allow-Headers': 'Content-Type, token_data, token_userId, tokenUserId'
+      'Access-Control-Allow-Headers': 'Content-Type, X-Token-Data, X-Token-UserId, X-TokenUserId, token_data, token_userId, tokenUserId'
     }
   });
 }

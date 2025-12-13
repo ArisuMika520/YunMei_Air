@@ -53,6 +53,8 @@ export class TransparentProxyClient {
       }
     };
 
+    console.log('[TransparentProxy] 发送的头部:', requestInit.headers);
+
     // 只有当有 body 时才添加
     if (body && typeof body === 'object' && Object.keys(body).length > 0) {
       requestInit.body = JSON.stringify(body);
